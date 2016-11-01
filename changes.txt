@@ -1,0 +1,25 @@
+0.6
+Multiple targets with separate optional radia and weights
+Multiple repellers with spearate radis and weights
+Changed GUI layout
+Minor optimization
+New icons
+
+0.5
+Fixed bug: The flock modifier would cancel out the effect of any other particle modifier
+
+0.4
+Fixed bug: Speed limits won't work if "Avoid Geometry" is not active
+Added repeller rule
+Minor optimization
+
+0.3
+Changed target workflow
+Added drawing
+
+0.2
+Added geometry avoidance
+Added soft speed limits
+
+0.1
+Initial build

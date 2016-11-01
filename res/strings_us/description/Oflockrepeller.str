@@ -1,0 +1,8 @@
+STRINGTABLE Oflockrepeller
+{
+	Oflockrepeller							"Flock Repeller Object";
+
+	OFLOCKREPELLER_WEIGHT				"Weight";
+	OFLOCKREPELLER_RADIUS				"Radius";
+	OFLOCKREPELLER_ENABLED			"Enabled";
+}
