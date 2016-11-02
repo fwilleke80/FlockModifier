@@ -11,7 +11,7 @@ class FlockRepeller : public ObjectData
 
 public:
 	virtual Bool Init(GeListNode *node);
-	virtual Bool GetDEnabling(GeListNode *node, const DescID &id,const GeData &t_data,DESCFLAGS_ENABLE flags,const BaseContainer *itemdesc);
+	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual DRAWRESULT Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh);
 
 	static NodeData *Alloc(void) { return NewObjClear(FlockRepeller); }
@@ -31,7 +31,7 @@ Bool FlockRepeller::Init( GeListNode *node )
 	return SUPER::Init(node);
 }
 
-Bool FlockRepeller::GetDEnabling( GeListNode *node, const DescID &id,const GeData &t_data,DESCFLAGS_ENABLE flags,const BaseContainer *itemdesc )
+Bool FlockRepeller::GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc)
 {
 	BaseContainer *bc = ((BaseObject*)node)->GetDataInstance();
 	if (!bc) return false;
@@ -46,7 +46,7 @@ Bool FlockRepeller::GetDEnabling( GeListNode *node, const DescID &id,const GeDat
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
-DRAWRESULT FlockRepeller::Draw( BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh )
+DRAWRESULT FlockRepeller::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
 {
 	if (drawpass != DRAWPASS_OBJECT) return DRAWRESULT_OK;
 	if (!op || !bd || !bh) return DRAWRESULT_ERROR;

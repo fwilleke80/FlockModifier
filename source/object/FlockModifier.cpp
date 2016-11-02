@@ -14,14 +14,14 @@ class FlockModifier : public ObjectData
 	INSTANCEOF(FlockModifier, ObjectData)
 
 	private:
-		GeRayCollider* collider;
+		GeRayCollider *collider;
 		GeRayColResult collider_result;
 
 	public:
 		virtual Bool Init(GeListNode *node);
-		virtual Bool GetDEnabling(GeListNode *node, const DescID &id,const GeData &t_data,DESCFLAGS_ENABLE flags,const BaseContainer *itemdesc);
+		virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 
-		virtual void ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* ss, Int32 pcnt, Float diff);
+		virtual void ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff);
 
 		static NodeData *Alloc(void) { return NewObjClear(FlockModifier); }
 
@@ -97,7 +97,7 @@ Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData
 /****************************************************************************
  * Simulate flock
  ****************************************************************************/
-void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* ss, Int32 pcnt, Float diff)
+void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff)
 {
 	if (!op || !pp || !ss || !collider) return;
 
