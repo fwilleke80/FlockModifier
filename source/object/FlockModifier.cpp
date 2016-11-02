@@ -6,6 +6,7 @@
 #include "Oflocktarget.h"
 #include "Oflockrepeller.h"
 #include "helpers.h"
+#include "main.h"
 
 
 class FlockModifier : public ObjectData
@@ -20,9 +21,9 @@ class FlockModifier : public ObjectData
 		virtual Bool Init(GeListNode *node);
 		virtual Bool GetDEnabling(GeListNode *node, const DescID &id,const GeData &t_data,DESCFLAGS_ENABLE flags,const BaseContainer *itemdesc);
 
-		virtual void ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* ss, LONG pcnt, Real diff);
+		virtual void ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* ss, Int32 pcnt, Float diff);
 
-		static NodeData *Alloc(void) { return gNew FlockModifier; }
+		static NodeData *Alloc(void) { return NewObjClear(FlockModifier); }
 
 		FlockModifier()
 		{ 
@@ -31,7 +32,7 @@ class FlockModifier : public ObjectData
 
 		~FlockModifier()
 		{
-			if (collider) GeRayCollider::Free(collider);
+			GeRayCollider::Free(collider);
 		}
 };
 
@@ -40,30 +41,32 @@ class FlockModifier : public ObjectData
  * Initialize attributes
  ****************************************************************************/
 Bool FlockModifier::Init(GeListNode *node)
-{	
+{
+	if (!node) return false;
+
 	BaseObject		*op   = (BaseObject*)node;
 	BaseContainer *bc = op->GetDataInstance();
-	if (!bc) return FALSE;
+	if (!bc) return false;
 
-	bc->SetReal(OFLOCK_WEIGHT, RCO 1.0);
-	bc->SetReal(OFLOCK_CENTER_WEIGHT, RCO 0.2);
-	bc->SetReal(OFLOCK_NEIGHBORDIST_WEIGHT, RCO 0.1);
-	bc->SetReal(OFLOCK_NEIGHBORDIST_DIST, RCO 10.0);
-	bc->GetReal(OFLOCK_MATCHVEL_WEIGHT, RCO 0.1);
-	bc->SetReal(OFLOCK_TARGET_WEIGHT, RCO 0.15);
-	bc->SetReal(OFLOCK_LEVELFLIGHT_WEIGHT, RCO 0.3);
-	bc->SetReal(OFLOCK_SPEED_WEIGHT, RCO 0.2);
-	bc->SetLong(OFLOCK_SPEED_MODE, OFLOCK_SPEED_MODE_SOFT);
-	bc->SetReal(OFLOCK_SPEED_MIN, RCO 0.0);
-	bc->SetReal(OFLOCK_SPEED_MAX, RCO 200.0);
-	bc->SetReal(OFLOCK_SIGHT, RCO 50.0);
-	bc->SetReal(OFLOCK_AVOIDGEO_WEIGHT, RCO 1.0);
-	bc->SetReal(OFLOCK_AVOIDGEO_DIST, 50.0);
-	bc->SetLong(OFLOCK_AVOIDGEO_MODE, OFLOCK_AVOIDGEO_MODE_SOFT);
-	bc->SetReal(OFLOCK_TURBULENCE_WEIGHT, RCO 0.5);
-	bc->SetReal(OFLOCK_TURBULENCE_FREQUENCY, RCO 2.0);
-	bc->SetReal(OFLOCK_TURBULENCE_SCALE, RCO 2.0);
-	bc->SetReal(OFLOCK_REPELL_WEIGHT, RCO 1.0);
+	bc->SetFloat(OFLOCK_WEIGHT, 1.0);
+	bc->SetFloat(OFLOCK_CENTER_WEIGHT, 0.2);
+	bc->SetFloat(OFLOCK_NEIGHBORDIST_WEIGHT, 0.1);
+	bc->SetFloat(OFLOCK_NEIGHBORDIST_DIST, 10.0);
+	bc->GetFloat(OFLOCK_MATCHVEL_WEIGHT, 0.1);
+	bc->GetFloat(OFLOCK_TARGET_WEIGHT, 0.15);
+	bc->GetFloat(OFLOCK_LEVELFLIGHT_WEIGHT, 0.3);
+	bc->GetFloat(OFLOCK_SPEED_WEIGHT, 0.2);
+	bc->SetInt32(OFLOCK_SPEED_MODE, OFLOCK_SPEED_MODE_SOFT);
+	bc->SetFloat(OFLOCK_SPEED_MIN, 0.0);
+	bc->SetFloat(OFLOCK_SPEED_MAX, 200.0);
+	bc->SetFloat(OFLOCK_SIGHT, 50.0);
+	bc->SetFloat(OFLOCK_AVOIDGEO_WEIGHT, 1.0);
+	bc->SetFloat(OFLOCK_AVOIDGEO_DIST, 50.0);
+	bc->SetFloat(OFLOCK_AVOIDGEO_MODE, OFLOCK_AVOIDGEO_MODE_SOFT);
+	bc->SetFloat(OFLOCK_TURBULENCE_WEIGHT, 0.5);
+	bc->SetFloat(OFLOCK_TURBULENCE_FREQUENCY, 2.0);
+	bc->SetFloat(OFLOCK_TURBULENCE_SCALE, 2.0);
+	bc->SetFloat(OFLOCK_REPELL_WEIGHT, 1.0);
 
 	return SUPER::Init(node);
 }
@@ -73,16 +76,18 @@ Bool FlockModifier::Init(GeListNode *node)
  ****************************************************************************/
 Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData &t_data,DESCFLAGS_ENABLE flags,const BaseContainer *itemdesc)
 {
+	if (!node) return false;
+	
 	BaseContainer *bc = ((BaseObject*)node)->GetDataInstance();
-	if (!bc) return FALSE;
+	if (!bc) return false;
 
 	switch (id[0].id)
 	{
 		case OFLOCK_AVOIDGEO_WEIGHT:
-			return bc->GetLong(OFLOCK_AVOIDGEO_MODE) == OFLOCK_AVOIDGEO_MODE_SOFT;
+			return bc->GetInt32(OFLOCK_AVOIDGEO_MODE) == OFLOCK_AVOIDGEO_MODE_SOFT;
 			break;
 		case OFLOCK_SPEED_WEIGHT:
-			return bc->GetLong(OFLOCK_SPEED_MODE) == OFLOCK_SPEED_MODE_SOFT;
+			return bc->GetInt32(OFLOCK_SPEED_MODE) == OFLOCK_SPEED_MODE_SOFT;
 			break;
 	}
 
@@ -92,121 +97,121 @@ Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData
 /****************************************************************************
  * Simulate flock
  ****************************************************************************/
-void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* ss, LONG pcnt, Real diff)
+void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* ss, Int32 pcnt, Float diff)
 {
 	if (!op || !pp || !ss || !collider) return;
 
-	LONG i,j;
+	Int32 i,j,n;
 
 	BaseContainer* bc = op->GetDataInstance();
 	BaseDocument* doc = op->GetDocument();
 
 	// Variables
-	LONG lCount = pcnt - 1;
+	Int32 lCount = pcnt - 1;
 	Vector vParticleDir;
 
 	// Overall weight
-	Real rWeight = bc->GetReal(OFLOCK_WEIGHT, RCO 1.0);
+	Float rWeight = bc->GetFloat(OFLOCK_WEIGHT, 1.0);
 
 	// Range of sight
-	Real rNeighborDist = RCO 0.0;
-	Real rNeighborSightRadius = bc->GetReal(OFLOCK_SIGHT, RCO 0.0);
+	Float rNeighborDist = 0.0;
+	Float rNeighborSightRadius = bc->GetFloat(OFLOCK_SIGHT, 0.0);
 	rNeighborSightRadius *= rNeighborSightRadius;		// Square
 
 	// Flock Center
 	Vector vCenterflockDir;
-	Real rCenterflockWeight = bc->GetReal(OFLOCK_CENTER_WEIGHT, RCO 0.0) * RCO 0.1;
+	Float rCenterflockWeight = bc->GetFloat(OFLOCK_CENTER_WEIGHT, 0.0) * 0.1;
 
 	// Neighbor Distance
 	Vector vNeighborDiff(DC);
 	Vector vNeighborDir;
-	Real rNeighborWeight = bc->GetReal(OFLOCK_NEIGHBORDIST_WEIGHT, RCO 0.0) * RCO 0.1;
-	Real rNeighborMinDist = bc->GetReal(OFLOCK_NEIGHBORDIST_DIST, RCO 0.0);
+	Float rNeighborWeight = bc->GetFloat(OFLOCK_NEIGHBORDIST_WEIGHT, 0.0) * 0.1;
+	Float rNeighborMinDist = bc->GetFloat(OFLOCK_NEIGHBORDIST_DIST, 0.0);
 
 	// Match Velocity
 	Vector vMatchVelocityDir;
-	Real rMatchVelocityWeight = bc->GetReal(OFLOCK_MATCHVEL_WEIGHT, RCO 0.0) * RCO 0.1;
+	Float rMatchVelocityWeight = bc->GetFloat(OFLOCK_MATCHVEL_WEIGHT, 0.0) * 0.1;
 
 	// Target
-	Real rTargetGlobalWeight = bc->GetReal(OFLOCK_TARGET_WEIGHT, RCO 0.0) * RCO 0.1;
+	Float rTargetGlobalWeight = bc->GetFloat(OFLOCK_TARGET_WEIGHT, 0.0) * 0.1;
 	InExcludeData* inexTarget = (InExcludeData*)bc->GetCustomDataType(OFLOCK_TARGET_LINK, CUSTOMDATATYPE_INEXCLUDE_LIST);
-	LONG lTargetCount = 0;
+	Int32 lTargetCount = 0;
 	if (inexTarget) lTargetCount = inexTarget->GetObjectCount();
-	c4d_misc::BaseArray<TargetData>targetData;
+	maxon::BaseArray<TargetData>targetData;
 
 	// Level flight
-	Real rLevelFlightWeight = bc->GetReal(OFLOCK_LEVELFLIGHT_WEIGHT, RCO 0.0);
+	Float rLevelFlightWeight = bc->GetFloat(OFLOCK_LEVELFLIGHT_WEIGHT, 0.0);
 
 	// Speed limits
-	Real rSpeed = RCO 0.0;
-	LONG lSpeedMode = bc->GetLong(OFLOCK_SPEED_MODE, OFLOCK_SPEED_MODE_SOFT);
-	Real rSpeedWeight = bc->GetReal(OFLOCK_SPEED_WEIGHT, RCO 0.0);
-	Real rSpeedMin = bc->GetReal(OFLOCK_SPEED_MIN, RCO 0.0) * diff;
-	Real rSpeedMax = bc->GetReal(OFLOCK_SPEED_MAX, RCO 100.0) * diff;
-	Real rSpeedRatio;
+	Float rSpeed = 0.0;
+	Int32 lSpeedMode = bc->GetInt32(OFLOCK_SPEED_MODE, OFLOCK_SPEED_MODE_SOFT);
+	Float rSpeedWeight = bc->GetFloat(OFLOCK_SPEED_WEIGHT, 0.0);
+	Float rSpeedMin = bc->GetFloat(OFLOCK_SPEED_MIN, 0.0) * diff;
+	Float rSpeedMax = bc->GetFloat(OFLOCK_SPEED_MAX, 100.0) * diff;
+	Float rSpeedRatio;
 
 	// Geometry avoidance
-	LONG lAvoidGeoMode = bc->GetLong(OFLOCK_AVOIDGEO_MODE, 1);
-	Real rAvoidGeoWeight = bc->GetReal(OFLOCK_AVOIDGEO_WEIGHT, RCO 0.0);
-	Real rAvoidGeoDist = bc->GetReal(OFLOCK_AVOIDGEO_DIST, RCO 0.0);
+	Int32 lAvoidGeoMode = bc->GetInt32(OFLOCK_AVOIDGEO_MODE, 1);
+	Float rAvoidGeoWeight = bc->GetFloat(OFLOCK_AVOIDGEO_WEIGHT, 0.0);
+	Float rAvoidGeoDist = bc->GetFloat(OFLOCK_AVOIDGEO_DIST, 0.0);
 	Vector vAvoidGeoDir;
 	BaseObject* boAvoidGeoLink = bc->GetObjectLink(OFLOCK_AVOIDGEO_LINK, doc);
 	Matrix mAvoidGeo, mAvoidGeoI;
-	Real rAvoidGeoMixval;
+	Float rAvoidGeoMixval;
 
 	// Turbulence
-	Real rTurbulenceWeight = bc->GetReal(OFLOCK_TURBULENCE_WEIGHT, RCO 0.0) * RCO 10.0;
-	Real rTurbulenceTime = doc->GetTime().Get() * bc->GetReal(OFLOCK_TURBULENCE_FREQUENCY, RCO 1.0);
-	Real rTurbulenceScale = RCO 0.1 / FCut(bc->GetReal(OFLOCK_TURBULENCE_SCALE, RCO 1.0), RCO 0.0001, MAXREALl);
+	Float rTurbulenceWeight = bc->GetFloat(OFLOCK_TURBULENCE_WEIGHT, 0.0) * 10.0;
+	Float rTurbulenceTime = doc->GetTime().Get() * bc->GetFloat(OFLOCK_TURBULENCE_FREQUENCY, 1.0);
+	Float rTurbulenceScale = 0.1 / ClampValue(bc->GetFloat(OFLOCK_TURBULENCE_SCALE, 1.0), 0.0001, MAXRANGE_FLOAT);
 	Vector rTurbulenceAdd1;
 	Vector rTurbulenceAdd2;
 
 	// Repell
-	Real rRepellGlobalWeight = bc->GetReal(OFLOCK_REPELL_WEIGHT, RCO 0.0);
+	Float rRepellGlobalWeight = bc->GetFloat(OFLOCK_REPELL_WEIGHT, 0.0);
 	InExcludeData* inexRepell = (InExcludeData*)bc->GetCustomDataType(OFLOCK_REPELL_LINK, CUSTOMDATATYPE_INEXCLUDE_LIST);
-	LONG lRepellCount = 0;
+	Int32 lRepellCount = 0;
 	if (inexRepell) lRepellCount = inexRepell->GetObjectCount();
-	c4d_misc::BaseArray<RepellerData>repellerData;
+	maxon::BaseArray<RepellerData>repellerData;
 
 
 	/* ------------------- Set rule mask & prepare some data --------------------------- */ 
-	LONG rulemask = RULEFLAGS_0;
+	RULEFLAGS rulemask = RULEFLAGS_NONE;
 
 	// Center Flock
-	if (!CompareFloatTolerant(rCenterflockWeight, RCO 0.0))
+	if (!CompareFloatTolerant(rCenterflockWeight, 0.0))
 	{
 		rulemask |= RULEFLAGS_CENTER;
 	}
 
 	// Neighbor Distance
-	if (!CompareFloatTolerant(rNeighborWeight, RCO 0.0))
+	if (!CompareFloatTolerant(rNeighborWeight, 0.0))
 	{
 		rulemask |= RULEFLAGS_NEIGHBORDIST;
 		rNeighborMinDist *= rNeighborMinDist;		// Square
 	}
 
 	// Match Flock Velocity
-	if (!CompareFloatTolerant(rMatchVelocityWeight, RCO 0.0))
+	if (!CompareFloatTolerant(rMatchVelocityWeight, 0.0))
 	{
 		rulemask |= RULEFLAGS_MATCHVELO;
 	}
 
 	// Level Flight
-	if (!CompareFloatTolerant(rLevelFlightWeight, RCO 0.0))
+	if (!CompareFloatTolerant(rLevelFlightWeight, 0.0))
 	{
 		rulemask |= RULEFLAGS_LEVELFLIGHT;
 	}
 
 	// Turbulence
-	if (!CompareFloatTolerant(rTurbulenceWeight, RCO 0.0))
+	if (!CompareFloatTolerant(rTurbulenceWeight, 0.0))
 	{
 		rulemask |= RULEFLAGS_TURBULENCE;
-		rTurbulenceAdd1 = Vector(pi * RCO 1000.0);
-		rTurbulenceAdd2 = Vector(-pi05 * RCO 1000.0);
+		rTurbulenceAdd1 = Vector(PI * 1000.0);
+		rTurbulenceAdd2 = Vector(-PI05 * 1000.0);
 	}
 
 	// Speed Limit
-	if (((lSpeedMode == OFLOCK_SPEED_MODE_SOFT && !CompareFloatTolerant(rSpeedWeight, RCO 0.0)) || lSpeedMode == OFLOCK_SPEED_MODE_HARD))
+	if (((lSpeedMode == OFLOCK_SPEED_MODE_SOFT && !CompareFloatTolerant(rSpeedWeight, 0.0)) || lSpeedMode == OFLOCK_SPEED_MODE_HARD))
 	{
 		rulemask |= RULEFLAGS_SPEEDLIMIT;
 		rSpeedMin *= rSpeedMin;		// Square
@@ -214,16 +219,15 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	}
 
 	// Target
-	if (!CompareFloatTolerant(rTargetGlobalWeight, RCO 0.0) && inexTarget && lTargetCount > 0)
+	if (!CompareFloatTolerant(rTargetGlobalWeight, 0.0) && inexTarget && lTargetCount > 0)
 	{
 		rulemask |= RULEFLAGS_TARGET;
 
-		BaseObject* opListItem = NULL;
-		TargetData tdata;
-		BaseContainer* tc = NULL;
+		BaseObject* opListItem = nullptr;
+		BaseContainer* tc = nullptr;
 
 		targetData.Flush();
-		for (LONG i = 0; i < lTargetCount; i++)
+		for (i = 0; i < lTargetCount; i++)
 		{
 			opListItem = (BaseObject*)inexTarget->ObjectFromIndex(doc, i);
 			if (opListItem)
@@ -231,11 +235,11 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				tc = opListItem->GetDataInstance();
 				if (tc && tc->GetBool(OFLOCKTARGET_ENABLED))
 				{
-					tdata._weight = tc->GetReal(OFLOCKREPELLER_WEIGHT, RCO 1.0);
-					tdata._radius = tc->GetReal(OFLOCKTARGET_RADIUS, RCO 0.0);
+					TargetData tdata((Float32)tc->GetFloat(OFLOCKREPELLER_WEIGHT, 1.0),
+													 (Float32)tc->GetFloat(OFLOCKTARGET_RADIUS, 0.0),
+													 tc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, true),
+													 opListItem->GetMg().off);
 					tdata._radius *= tdata._radius;		// Square
-					tdata._infinite = tc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, TRUE);
-					tdata._position = opListItem->GetMg().off;
 					targetData.Append(tdata);
 				}
 			}
@@ -243,25 +247,24 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	}
 
 	// Avoid Geometry
-	if (((lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && !CompareFloatTolerant(rAvoidGeoWeight, RCO 0.0)) || lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && !CompareFloatTolerant(rAvoidGeoDist, RCO 0.0) && boAvoidGeoLink && boAvoidGeoLink->GetType() == Opolygon && ToPoly(boAvoidGeoLink)->GetPolygonCount() > 0)
+	if (((lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && !CompareFloatTolerant(rAvoidGeoWeight, 0.0)) || lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && !CompareFloatTolerant(rAvoidGeoDist, 0.0) && boAvoidGeoLink && boAvoidGeoLink->GetType() == Opolygon && ToPoly(boAvoidGeoLink)->GetPolygonCount() > 0)
 	{
 		rulemask |= RULEFLAGS_AVOIDGEO;
 		collider->Init(boAvoidGeoLink, boAvoidGeoLink->GetDirty(DIRTYFLAGS_CACHE|DIRTYFLAGS_MATRIX|DIRTYFLAGS_DATA));
 		mAvoidGeo = boAvoidGeoLink->GetMg();
-		mAvoidGeoI = !mAvoidGeo;
+		mAvoidGeoI = ~mAvoidGeo;
 	}
 
 	// Repelling
-	if (!CompareFloatTolerant(rRepellGlobalWeight, RCO 0.0) && inexRepell && lRepellCount > 0)
+	if (!CompareFloatTolerant(rRepellGlobalWeight, 0.0) && inexRepell && lRepellCount > 0)
 	{
 		rulemask |= RULEFLAGS_REPELL;
 
-		BaseObject* opListItem = NULL;
-		RepellerData rdata;
-		BaseContainer* tc = NULL;
+		BaseObject* opListItem = nullptr;
+		BaseContainer* tc = nullptr;
 
 		repellerData.Flush();
-		for (LONG i = 0; i < lRepellCount; i++)
+		for (i = 0; i < lRepellCount; i++)
 		{
 			opListItem = (BaseObject*)inexRepell->ObjectFromIndex(doc, i);
 			if (opListItem)
@@ -269,10 +272,10 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				tc = opListItem->GetDataInstance();
 				if (tc && tc->GetBool(OFLOCKREPELLER_ENABLED))
 				{
-					rdata._weight = tc->GetReal(OFLOCKREPELLER_WEIGHT, RCO 1.0);
-					rdata._radius = tc->GetReal(OFLOCKREPELLER_RADIUS, RCO 0.0);
+					RepellerData rdata((Float32)tc->GetFloat(OFLOCKREPELLER_WEIGHT, 1.0),
+														 (Float32)tc->GetFloat(OFLOCKREPELLER_RADIUS, 0.0),
+														 opListItem->GetMg().off);
 					rdata._radius *= rdata._radius;		// Square
-					rdata._position = opListItem->GetMg().off;
 					repellerData.Append(rdata);
 				}
 			}
@@ -303,11 +306,11 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 
 			// Get distance to current particle
 			vNeighborDiff = pp[j].off - pp[i].off;
-			rNeighborDist = vNeighborDiff.GetLengthSquared();
+			rNeighborDist = vNeighborDiff.GetSquaredLength();
 
 			// Skip if particles too far away from each other
 			if (rNeighborDist > rNeighborSightRadius) continue;
-
+			
 			// Flock Center
 			// ------------
 			if (rulemask & RULEFLAGS_CENTER)
@@ -343,7 +346,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			// ------------
 			if (rulemask & RULEFLAGS_CENTER)
 			{
-				vParticleDir += ((vCenterflockDir / RCO lCount) - pp[i].off) * rCenterflockWeight;
+				vParticleDir += ((vCenterflockDir / lCount) - pp[i].off) * rCenterflockWeight;
 			}
 
 			// Neighbor Distance
@@ -357,17 +360,17 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			// ------
 			if (rulemask & RULEFLAGS_TARGET)
 			{
-				for (LONG n = 0; n < targetData.GetCount(); n++)
+				for (n = 0; n < targetData.GetCount(); n++)
 				{
-					Vector diff = targetData[n]._position - pp[i].off;
-					Real dist = diff.GetLengthSquared();
+					Vector dist = targetData[n]._position - pp[i].off;
+					Float distLength = dist.GetSquaredLength();
 					if (targetData[n]._infinite)
 					{
-						vParticleDir += diff * targetData[n]._weight * rTargetGlobalWeight;
+						vParticleDir += dist * targetData[n]._weight * rTargetGlobalWeight;
 					}
-					else if (dist < targetData[n]._radius)
+					else if (distLength < targetData[n]._radius)
 					{
-						vParticleDir += diff * (RCO 1.0 - dist / targetData[n]._radius) * targetData[n]._weight * rTargetGlobalWeight;
+						vParticleDir += dist * (1.0 - distLength / targetData[n]._radius) * targetData[n]._weight * rTargetGlobalWeight;
 					}
 				}
 			}
@@ -376,7 +379,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			// --------------
 			if (rulemask & RULEFLAGS_MATCHVELO)
 			{
-				vParticleDir += ((vMatchVelocityDir / RCO lCount) - pp[i].v3) * rMatchVelocityWeight;
+				vParticleDir += ((vMatchVelocityDir / lCount) - pp[i].v3) * rMatchVelocityWeight;
 			}
 
 			// Turbulence
@@ -390,13 +393,13 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			// ------
 			if (rulemask  & RULEFLAGS_REPELL)
 			{
-				for (LONG n = 0; n < repellerData.GetCount(); n++)
+				for (n = 0; n < repellerData.GetCount(); n++)
 				{
-					Vector diff = repellerData[n]._position - pp[i].off;
-					Real dist = diff.GetLengthSquared();
-					if (dist < repellerData[n]._radius)
+					Vector dist = repellerData[n]._position - pp[i].off;
+					Float distLength = dist.GetSquaredLength();
+					if (distLength < repellerData[n]._radius)
 					{
-						vParticleDir -= diff * (RCO 1.0 - dist / repellerData[n]._radius) * repellerData[n]._weight * rRepellGlobalWeight;
+						vParticleDir -= dist * (1.0 - distLength / repellerData[n]._radius) * repellerData[n]._weight * rRepellGlobalWeight;
 					}
 				}
 			}
@@ -416,20 +419,20 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			// --------------
 			if (rulemask & RULEFLAGS_AVOIDGEO)
 			{
-				if (collider->Intersect(pp[i].off * mAvoidGeoI, !vParticleDir ^ mAvoidGeoI, rAvoidGeoDist))
+				if (collider->Intersect(mAvoidGeoI * pp[i].off, mAvoidGeoI.TransformVector(!vParticleDir), rAvoidGeoDist))
 				{
 					if (collider->GetNearestIntersection(&collider_result))
 					{
-						rAvoidGeoMixval = RCO 1.0 - collider_result.distance / rAvoidGeoDist;
+						rAvoidGeoMixval = 1.0 - collider_result.distance / rAvoidGeoDist;
 						switch (lAvoidGeoMode)
 						{
 							case OFLOCK_AVOIDGEO_MODE_SOFT:
-								vParticleDir = vParticleDir + (!(collider_result.s_normal) ^ mAvoidGeo) * vParticleDir.GetLength() * rAvoidGeoMixval * rAvoidGeoWeight;
+								vParticleDir = vParticleDir + mAvoidGeo.TransformVector(!(collider_result.s_normal)) * vParticleDir.GetLength() * rAvoidGeoMixval * rAvoidGeoWeight;
 								break;
 
 							default:
 							case OFLOCK_AVOIDGEO_MODE_HARD:
-								vParticleDir = Mix((!collider_result.s_normal * vParticleDir.GetLength()) ^ mAvoidGeo, vParticleDir, rAvoidGeoMixval);
+								vParticleDir = Blend(mAvoidGeo.TransformVector((!collider_result.s_normal * vParticleDir.GetLength())), vParticleDir, rAvoidGeoMixval);
 								break;
 						}
 					}
@@ -439,7 +442,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 
 			// Speed Limits
 			// ------------
-			rSpeed = vParticleDir.GetLengthSquared() * diff;
+			rSpeed = vParticleDir.GetSquaredLength() * diff;
 			if (rulemask & RULEFLAGS_SPEEDLIMIT)
 			{
 				switch (lSpeedMode)
@@ -448,13 +451,13 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 						{
 							if (rSpeed < rSpeedMin)
 							{
-								rSpeedRatio = rSpeedMin / FMax(rSpeed, RCO 0.001);
-								vParticleDir *= Mix(RCO 1.0, rSpeedRatio, rSpeedWeight);
+								rSpeedRatio = rSpeedMin / FMax(rSpeed, 0.001);
+								vParticleDir *= Blend(1.0, rSpeedRatio, rSpeedWeight);
 							}
 							else if (rSpeed > rSpeedMax)
 							{
-								rSpeedRatio = rSpeedMax / FMax(rSpeed, RCO 0.001);
-								vParticleDir *= Mix(RCO 1.0, rSpeedRatio, rSpeedWeight);
+								rSpeedRatio = rSpeedMax / FMax(rSpeed, 0.001);
+								vParticleDir *= Blend(1.0, rSpeedRatio, rSpeedWeight);
 							}
 						}
 						break;
@@ -475,7 +478,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			}
 
 			// Add resulting velocity, apply overall weight
-			ss[i].v += Mix(pp[i].v3, vParticleDir, rWeight);
+			ss[i].v += Blend(pp[i].v3, vParticleDir, rWeight);
 		}
 
 		ss[i].count++;
@@ -486,7 +489,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 /****************************************************************************
  * Register Plugin Object
  ****************************************************************************/
-Bool RegisterFlockModifier(void)
+Bool RegisterFlockModifier()
 {
 	return RegisterObjectPlugin(ID_OFLOCKMODIFIER, GeLoadString(IDS_OFLOCK), OBJECT_PARTICLEMODIFIER, FlockModifier::Alloc, "Oflock", AutoBitmap("Oflock.tif"), 0);
 }

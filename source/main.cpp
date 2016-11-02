@@ -1,48 +1,29 @@
-/////////////////////////////////////////////////////////////
-// CINEMA 4D SDK                                           //
-/////////////////////////////////////////////////////////////
-// (c) 1989-2011 MAXON Computer GmbH, all rights reserved  //
-/////////////////////////////////////////////////////////////
-
-
 #include "c4d.h"
+#include "main.h"
 
-Bool RegisterFlockModifier();
-Bool RegisterFlockTarget();
-Bool RegisterFlockRepeller();
-
-C4D_CrashHandler old_handler;
-
-void SDKCrashHandler(CHAR *crashinfo)
+Bool PluginStart()
 {
-	// don't forget to call the original handler!!!
-	if (old_handler) (*old_handler)(crashinfo);
-}
+	if (!RegisterFlockModifier()) return false;
+	if (!RegisterFlockTarget()) return false;
+	if (!RegisterFlockRepeller()) return false;
 
-Bool PluginStart(void)
-{
-	if (!RegisterFlockModifier()) return FALSE;
-	if (!RegisterFlockTarget()) return FALSE;
-	if (!RegisterFlockRepeller()) return FALSE;
-
-	return TRUE;
+	return true;
 }
 
 void PluginEnd(void)
 {
 }
 
-Bool PluginMessage(LONG id, void *data)
+Bool PluginMessage(Int32 id, void *data)
 {
 	switch (id)
 	{
 		case C4DPL_INIT_SYS:
-			if (!resource.Init()) return FALSE; // don't start plugin without resource
-
-			return TRUE;
+			if (!resource.Init()) return false; // don't start plugin without resource
+			return true;
 
 		case C4DMSG_PRIORITY:
-			return TRUE;
+			return true;
 
 		case C4DPL_BUILDMENU:
 			break;
@@ -51,8 +32,8 @@ Bool PluginMessage(LONG id, void *data)
 			break;
 
 		case C4DPL_EDITIMAGE:
-			return FALSE;
+			return false;
 	}
 
-	return FALSE;
+	return false;
 }
