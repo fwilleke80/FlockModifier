@@ -5,6 +5,7 @@
 *.xcbkptlist
 *.xcscheme
 *.plist
+*.dylib
 
 # Windows files
 *.exp
@@ -13,6 +14,3 @@
 *.sdf
 *.tlog
 *.lastbuildstate
-
-# Other files
-*.dylib
