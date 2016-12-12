@@ -1,8 +1,14 @@
 #include "c4d.h"
 #include "main.h"
 
+
+#define PLUGIN_VERSION	String("0.7")
+
+
 Bool PluginStart()
 {
+	GePrint("FlockModifier " + PLUGIN_VERSION);
+	
 	if (!RegisterFlockModifier()) return false;
 	if (!RegisterFlockTarget()) return false;
 	if (!RegisterFlockRepeller()) return false;
