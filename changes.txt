@@ -1,3 +1,6 @@
+0.7
+API changes for R18
+
 0.6
 Multiple targets with separate optional radia and weights
 Multiple repellers with spearate radis and weights
