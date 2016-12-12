@@ -1,14 +1,18 @@
-
+# OSX files
 *.xcworkspacedata
-
 *.xcuserstate
-
 *.xcsettings
-
 *.xcbkptlist
-
 *.xcscheme
-
 *.plist
 
-FlockModifier.dylib
+# Windows files
+*.exp
+*.cdl64
+*.opensdf
+*.sdf
+*.tlog
+*.lastbuildstate
+
+# Other files
+*.dylib
