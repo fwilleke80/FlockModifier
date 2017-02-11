@@ -12,3 +12,5 @@
 *.plist
 
 FlockModifier.dylib
+
+/*.cdl64
