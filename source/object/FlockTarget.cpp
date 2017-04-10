@@ -14,7 +14,10 @@ public:
 	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual DRAWRESULT Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh);
 
-	static NodeData *Alloc(void) { return NewObjClear(FlockTarget); }
+	static NodeData *Alloc(void)
+	{
+		return NewObjClear(FlockTarget);
+	}
 };
 
 
@@ -23,9 +26,9 @@ Bool FlockTarget::Init(GeListNode *node)
 	if (!node)
 		return false;
 	
-	BaseObject		*op   = (BaseObject*)node;
-	BaseContainer *bc = op->GetDataInstance();
-	if (!bc) return false;
+	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
+	if (!bc)
+		return false;
 
 	bc->SetBool(OFLOCKTARGET_ENABLED, true);
 	bc->SetFloat(OFLOCKTARGET_WEIGHT, 1.0);
@@ -37,8 +40,12 @@ Bool FlockTarget::Init(GeListNode *node)
 
 Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc)
 {
-	BaseContainer *bc = ((BaseObject*)node)->GetDataInstance();
-	if (!bc) return false;
+	if (!node)
+		return false;
+	
+	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
+	if (!bc)
+		return false;
 
 	switch (id[0].id)
 	{
@@ -57,11 +64,15 @@ Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData 
 
 DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
 {
-	if (drawpass != DRAWPASS_OBJECT) return DRAWRESULT_OK;
-	if (!op || !bd || !bh) return DRAWRESULT_ERROR;
+	if (drawpass != DRAWPASS_OBJECT)
+		return DRAWRESULT_SKIP;
+	
+	if (!op || !bd || !bh)
+		return DRAWRESULT_ERROR;
 
 	BaseContainer* bc = op->GetDataInstance();
-	if (!bc) return DRAWRESULT_ERROR;
+	if (!bc)
+		return DRAWRESULT_ERROR;
 
 	bd->SetPen(COLOR_FLOCKTARGET * bc->GetFloat(OFLOCKTARGET_WEIGHT));
 

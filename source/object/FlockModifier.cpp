@@ -12,28 +12,30 @@
 class FlockModifier : public ObjectData
 {
 	INSTANCEOF(FlockModifier, ObjectData)
+	
+public:
+	FlockModifier()
+	{
+		_collider = GeRayCollider::Alloc();
+	}
+	
+	~FlockModifier()
+	{
+		GeRayCollider::Free(_collider);
+	}
 
-	private:
-		GeRayCollider *collider;
-		GeRayColResult collider_result;
-
-	public:
-		virtual Bool Init(GeListNode *node);
-		virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
-
-		virtual void ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff);
-
-		static NodeData *Alloc(void) { return NewObjClear(FlockModifier); }
-
-		FlockModifier()
-		{ 
-			collider = GeRayCollider::Alloc();
-		}
-
-		~FlockModifier()
-		{
-			GeRayCollider::Free(collider);
-		}
+public:
+	virtual Bool Init(GeListNode *node);
+	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
+	virtual void ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff);
+	
+	static NodeData *Alloc(void)
+	{
+		return NewObjClear(FlockModifier);
+	}
+	
+private:
+	GeRayCollider *_collider;
 };
 
 
@@ -42,11 +44,12 @@ class FlockModifier : public ObjectData
  ****************************************************************************/
 Bool FlockModifier::Init(GeListNode *node)
 {
-	if (!node) return false;
+	if (!node)
+		return false;
 
-	BaseObject		*op   = (BaseObject*)node;
-	BaseContainer *bc = op->GetDataInstance();
-	if (!bc) return false;
+	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
+	if (!bc)
+		return false;
 
 	bc->SetFloat(OFLOCK_WEIGHT, 1.0);
 	bc->SetFloat(OFLOCK_CENTER_WEIGHT, 0.2);
@@ -76,21 +79,24 @@ Bool FlockModifier::Init(GeListNode *node)
  ****************************************************************************/
 Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData &t_data,DESCFLAGS_ENABLE flags,const BaseContainer *itemdesc)
 {
-	if (!node) return false;
+	if (!node)
+		return false;
 	
-	BaseContainer *bc = ((BaseObject*)node)->GetDataInstance();
-	if (!bc) return false;
-
+	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
+	if (!bc)
+		return false;
+	
 	switch (id[0].id)
 	{
 		case OFLOCK_AVOIDGEO_WEIGHT:
 			return bc->GetInt32(OFLOCK_AVOIDGEO_MODE) == OFLOCK_AVOIDGEO_MODE_SOFT;
 			break;
+			
 		case OFLOCK_SPEED_WEIGHT:
 			return bc->GetInt32(OFLOCK_SPEED_MODE) == OFLOCK_SPEED_MODE_SOFT;
 			break;
 	}
-
+	
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
@@ -99,12 +105,16 @@ Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData
  ****************************************************************************/
 void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff)
 {
-	if (!op || !pp || !ss || !collider) return;
+	if (!op || !pp || !ss || !_collider)
+		return;
 
 	Int32 i,j,n;
 
 	BaseContainer* bc = op->GetDataInstance();
 	BaseDocument* doc = op->GetDocument();
+	
+	if (!bc || !doc)
+		return;
 
 	// Variables
 	Int32 lCount = pcnt - 1;
@@ -214,8 +224,8 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	if (((lSpeedMode == OFLOCK_SPEED_MODE_SOFT && !CompareFloatTolerant(rSpeedWeight, 0.0)) || lSpeedMode == OFLOCK_SPEED_MODE_HARD))
 	{
 		rulemask |= RULEFLAGS_SPEEDLIMIT;
-		rSpeedMin *= rSpeedMin;		// Square
-		rSpeedMax *= rSpeedMax;		// Square
+		rSpeedMin *= rSpeedMin;   // Square
+		rSpeedMax *= rSpeedMax;   // Square
 	}
 
 	// Target
@@ -223,11 +233,11 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	{
 		rulemask |= RULEFLAGS_TARGET;
 
-		BaseObject* opListItem = nullptr;
-		BaseContainer* tc = nullptr;
+		BaseObject *opListItem = nullptr;
+		BaseContainer *tc = nullptr;
 
 		targetData.Flush();
-		for (i = 0; i < lTargetCount; i++)
+		for (i = 0; i < lTargetCount; ++i)
 		{
 			opListItem = (BaseObject*)inexTarget->ObjectFromIndex(doc, i);
 			if (opListItem)
@@ -236,10 +246,10 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				if (tc && tc->GetBool(OFLOCKTARGET_ENABLED))
 				{
 					TargetData tdata((Float32)tc->GetFloat(OFLOCKREPELLER_WEIGHT, 1.0),
-													 (Float32)tc->GetFloat(OFLOCKTARGET_RADIUS, 0.0),
-													 tc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, true),
-													 opListItem->GetMg().off);
-					tdata._radius *= tdata._radius;		// Square
+					                 (Float32)tc->GetFloat(OFLOCKTARGET_RADIUS, 0.0),
+					                 tc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, true),
+					                 opListItem->GetMg().off);
+					tdata._radius *= tdata._radius;   // Square
 					targetData.Append(tdata);
 				}
 			}
@@ -250,7 +260,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	if (((lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && !CompareFloatTolerant(rAvoidGeoWeight, 0.0)) || lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && !CompareFloatTolerant(rAvoidGeoDist, 0.0) && boAvoidGeoLink && boAvoidGeoLink->GetType() == Opolygon && ToPoly(boAvoidGeoLink)->GetPolygonCount() > 0)
 	{
 		rulemask |= RULEFLAGS_AVOIDGEO;
-		collider->Init(boAvoidGeoLink, boAvoidGeoLink->GetDirty(DIRTYFLAGS_CACHE|DIRTYFLAGS_MATRIX|DIRTYFLAGS_DATA));
+		_collider->Init(boAvoidGeoLink, boAvoidGeoLink->GetDirty(DIRTYFLAGS_CACHE|DIRTYFLAGS_MATRIX|DIRTYFLAGS_DATA));
 		mAvoidGeo = boAvoidGeoLink->GetMg();
 		mAvoidGeoI = ~mAvoidGeo;
 	}
@@ -264,7 +274,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		BaseContainer* tc = nullptr;
 
 		repellerData.Flush();
-		for (i = 0; i < lRepellCount; i++)
+		for (i = 0; i < lRepellCount; ++i)
 		{
 			opListItem = (BaseObject*)inexRepell->ObjectFromIndex(doc, i);
 			if (opListItem)
@@ -273,9 +283,9 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				if (tc && tc->GetBool(OFLOCKREPELLER_ENABLED))
 				{
 					RepellerData rdata((Float32)tc->GetFloat(OFLOCKREPELLER_WEIGHT, 1.0),
-														 (Float32)tc->GetFloat(OFLOCKREPELLER_RADIUS, 0.0),
-														 opListItem->GetMg().off);
-					rdata._radius *= rdata._radius;		// Square
+					                   (Float32)tc->GetFloat(OFLOCKREPELLER_RADIUS, 0.0),
+					                   opListItem->GetMg().off);
+					rdata._radius *= rdata._radius;   // Square
 					repellerData.Append(rdata);
 				}
 			}
@@ -284,10 +294,11 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 
 	// Iterate particles
-	for (i = 0; i < pcnt; i++)
+	for (i = 0; i < pcnt; ++i)
 	{
 		// Skip unwanted particles
-		if (!(pp[i].bits & PARTICLEFLAGS_VISIBLE)) continue;
+		if (!(pp[i].bits & PARTICLEFLAGS_VISIBLE))
+			continue;
 
 		// Reset values
 		vParticleDir = vCenterflockDir = vNeighborDir = vMatchVelocityDir = Vector();
@@ -296,10 +307,11 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		/* ------------------- Collect particle interaction data --------------------------- */ 
 
 		// Iterate other particles
-		for (j = 0; j < pcnt; j++)
+		for (j = 0; j < pcnt; ++j)
 		{
 			// Skip unwanted particles
-			if (!(pp[j].bits & PARTICLEFLAGS_VISIBLE) || i == j) continue;
+			if (!(pp[j].bits & PARTICLEFLAGS_VISIBLE) || i == j)
+				continue;
 
 			// General stuff for particle interaction
 			// --------------------------------------
@@ -309,7 +321,8 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			rNeighborDist = vNeighborDiff.GetSquaredLength();
 
 			// Skip if particles too far away from each other
-			if (rNeighborDist > rNeighborSightRadius) continue;
+			if (rNeighborDist > rNeighborSightRadius)
+				continue;
 			
 			// Flock Center
 			// ------------
@@ -360,7 +373,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// ------
 			if (rulemask & RULEFLAGS_TARGET)
 			{
-				for (n = 0; n < targetData.GetCount(); n++)
+				for (n = 0; n < targetData.GetCount(); ++n)
 				{
 					Vector dist = targetData[n]._position - pp[i].off;
 					Float distLength = dist.GetSquaredLength();
@@ -393,14 +406,12 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// ------
 			if (rulemask  & RULEFLAGS_REPELL)
 			{
-				for (n = 0; n < repellerData.GetCount(); n++)
+				for (n = 0; n < repellerData.GetCount(); ++n)
 				{
 					Vector dist = repellerData[n]._position - pp[i].off;
 					Float distLength = dist.GetSquaredLength();
 					if (distLength < repellerData[n]._radius)
-					{
 						vParticleDir -= dist * (1.0 - distLength / repellerData[n]._radius) * repellerData[n]._weight * rRepellGlobalWeight;
-					}
 				}
 			}
 
@@ -419,20 +430,22 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// --------------
 			if (rulemask & RULEFLAGS_AVOIDGEO)
 			{
-				if (collider->Intersect(mAvoidGeoI * pp[i].off, mAvoidGeoI.TransformVector(!vParticleDir), rAvoidGeoDist))
+				if (_collider->Intersect(mAvoidGeoI * pp[i].off, mAvoidGeoI.TransformVector(!vParticleDir), rAvoidGeoDist))
 				{
-					if (collider->GetNearestIntersection(&collider_result))
+					GeRayColResult colliderResult;
+
+					if (_collider->GetNearestIntersection(&colliderResult))
 					{
-						rAvoidGeoMixval = 1.0 - collider_result.distance / rAvoidGeoDist;
+						rAvoidGeoMixval = 1.0 - colliderResult.distance / rAvoidGeoDist;
 						switch (lAvoidGeoMode)
 						{
 							case OFLOCK_AVOIDGEO_MODE_SOFT:
-								vParticleDir = vParticleDir + mAvoidGeo.TransformVector(!(collider_result.s_normal)) * vParticleDir.GetLength() * rAvoidGeoMixval * rAvoidGeoWeight;
+								vParticleDir = vParticleDir + mAvoidGeo.TransformVector(!colliderResult.s_normal) * vParticleDir.GetLength() * rAvoidGeoMixval * rAvoidGeoWeight;
 								break;
 
 							default:
 							case OFLOCK_AVOIDGEO_MODE_HARD:
-								vParticleDir = Blend(mAvoidGeo.TransformVector((!collider_result.s_normal * vParticleDir.GetLength())), vParticleDir, rAvoidGeoMixval);
+								vParticleDir = Blend(mAvoidGeo.TransformVector((!colliderResult.s_normal * vParticleDir.GetLength())), vParticleDir, rAvoidGeoMixval);
 								break;
 						}
 					}
