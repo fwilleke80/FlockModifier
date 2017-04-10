@@ -15,14 +15,10 @@ class FlockModifier : public ObjectData
 	
 public:
 	FlockModifier()
-	{
-		_collider = GeRayCollider::Alloc();
-	}
+	{ }
 	
 	~FlockModifier()
-	{
-		GeRayCollider::Free(_collider);
-	}
+	{ }
 
 public:
 	virtual Bool Init(GeListNode *node);
@@ -35,7 +31,7 @@ public:
 	}
 	
 private:
-	GeRayCollider *_collider;
+	AutoFree<GeRayCollider> _collider;
 };
 
 
@@ -105,7 +101,7 @@ Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData
  ****************************************************************************/
 void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff)
 {
-	if (!op || !pp || !ss || !_collider)
+	if (!op || !pp || !ss)
 		return;
 
 	Int32 i,j,n;
@@ -260,6 +256,15 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	if (((lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && !CompareFloatTolerant(rAvoidGeoWeight, 0.0)) || lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && !CompareFloatTolerant(rAvoidGeoDist, 0.0) && boAvoidGeoLink && boAvoidGeoLink->GetType() == Opolygon && ToPoly(boAvoidGeoLink)->GetPolygonCount() > 0)
 	{
 		rulemask |= RULEFLAGS_AVOIDGEO;
+		
+		// Lazy-alloc collider
+		if (!_collider)
+		{
+			_collider.Set(GeRayCollider::Alloc());
+			if (!_collider)
+				return;
+		}
+		
 		_collider->Init(boAvoidGeoLink, boAvoidGeoLink->GetDirty(DIRTYFLAGS_CACHE|DIRTYFLAGS_MATRIX|DIRTYFLAGS_DATA));
 		mAvoidGeo = boAvoidGeoLink->GetMg();
 		mAvoidGeoI = ~mAvoidGeo;
