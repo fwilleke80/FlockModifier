@@ -261,7 +261,8 @@
 				DEPLOYMENT_LOCATION = YES;
 				EXECUTABLE_EXTENSION = dylib;
 				INSTALL_PATH = /.;
-				PRODUCT_NAME = FlockModifier_R16;
+				PRODUCT_MODULE_NAME = FlockModifier;
+				PRODUCT_NAME = FlockModifier;
 			};
 			name = Debug;
 		};
@@ -271,7 +272,8 @@
 				DEPLOYMENT_LOCATION = YES;
 				EXECUTABLE_EXTENSION = dylib;
 				INSTALL_PATH = /.;
-				PRODUCT_NAME = FlockModifier_R16;
+				PRODUCT_MODULE_NAME = FlockModifier;
+				PRODUCT_NAME = FlockModifier;
 			};
 			name = Release;
 		};
