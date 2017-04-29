@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlockModifier", "FlockModifier.vcxproj", "{21895B69-DE91-7035-0009-38CB8C5CDEA3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlockModifier", "FlockModifier_R18.vcxproj", "{21895B69-DE91-7035-0009-38CB8C5CDEA3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cinema.framework", "..\..\frameworks\cinema.framework\project\cinema.framework.vcxproj", "{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}"
 EndProject
