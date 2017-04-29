@@ -1,0 +1,76 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlockModifier", "FlockModifier_R16.vcxproj", "{21895B69-DE91-7035-0009-38CB8C5CDEA3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cinema.framework", "..\..\frameworks\cinema.framework\project\cinema.framework.vcxproj", "{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Intel|Win32 = Intel|Win32
+		Intel|x64 = Intel|x64
+		LibDebug|Win32 = LibDebug|Win32
+		LibDebug|x64 = LibDebug|x64
+		LibIntel|Win32 = LibIntel|Win32
+		LibIntel|x64 = LibIntel|x64
+		LibRelease|Win32 = LibRelease|Win32
+		LibRelease|x64 = LibRelease|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Debug|Win32.Build.0 = Debug|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Debug|x64.ActiveCfg = Debug|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Debug|x64.Build.0 = Debug|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Intel|Win32.ActiveCfg = Intel|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Intel|Win32.Build.0 = Intel|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Intel|x64.ActiveCfg = Intel|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Intel|x64.Build.0 = Intel|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibDebug|Win32.ActiveCfg = Debug|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibDebug|Win32.Build.0 = Debug|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibDebug|x64.ActiveCfg = Debug|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibDebug|x64.Build.0 = Debug|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibIntel|Win32.ActiveCfg = Intel|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibIntel|Win32.Build.0 = Intel|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibIntel|x64.ActiveCfg = Intel|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibIntel|x64.Build.0 = Intel|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibRelease|Win32.ActiveCfg = Release|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibRelease|Win32.Build.0 = Release|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibRelease|x64.ActiveCfg = Release|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.LibRelease|x64.Build.0 = Release|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Release|Win32.ActiveCfg = Release|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Release|Win32.Build.0 = Release|Win32
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Release|x64.ActiveCfg = Release|x64
+		{21895B69-DE91-7035-0009-38CB8C5CDEA3}.Release|x64.Build.0 = Release|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Debug|Win32.Build.0 = Debug|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Debug|x64.ActiveCfg = Debug|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Debug|x64.Build.0 = Debug|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Intel|Win32.ActiveCfg = Intel|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Intel|Win32.Build.0 = Intel|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Intel|x64.ActiveCfg = Intel|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Intel|x64.Build.0 = Intel|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibDebug|Win32.ActiveCfg = LibDebug|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibDebug|Win32.Build.0 = LibDebug|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibDebug|x64.ActiveCfg = LibDebug|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibDebug|x64.Build.0 = LibDebug|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibIntel|Win32.ActiveCfg = LibIntel|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibIntel|Win32.Build.0 = LibIntel|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibIntel|x64.ActiveCfg = LibIntel|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibIntel|x64.Build.0 = LibIntel|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibRelease|Win32.ActiveCfg = LibRelease|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibRelease|Win32.Build.0 = LibRelease|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibRelease|x64.ActiveCfg = LibRelease|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.LibRelease|x64.Build.0 = LibRelease|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Release|Win32.ActiveCfg = Release|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Release|Win32.Build.0 = Release|Win32
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Release|x64.ActiveCfg = Release|x64
+		{69BF9B7D-7EB2-7FC5-0009-38CB8C5CDEA3}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
