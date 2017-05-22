@@ -1,15 +1,16 @@
-#ifndef _FLOCKHELPERS_H_
-#define _FLOCKHELPERS_H_
+#ifndef FLOCKHELPERS_H__
+#define FLOCKHELPERS_H__
 
 
-#define ID_OFLOCKMODIFIER  1029168
-#define ID_OFLOCKREPELLER  1029184
-#define ID_OFLOCKTARGET    1029185
+const Int32 ID_OFLOCKMODIFIER = 1029168;
+const Int32 ID_OFLOCKREPELLER = 1029184;
+const Int32 ID_OFLOCKTARGET = 1029185;
+
+const Vector COLOR_FLOCKTARGET(0.5, 1.0, 0.5);
+const Vector COLOR_FLOCKREPELLER(1.0, 0.3, 0.3);
 
 
-#define COLOR_FLOCKTARGET    Vector(0.5, 1.0, 0.5)
-#define COLOR_FLOCKREPELLER  Vector(1.0, 0.3, 0.3)
-
+/// Flags to indicate which rules are active
 enum RULEFLAGS
 {
 	RULEFLAGS_NONE          = 0,
@@ -25,26 +26,31 @@ enum RULEFLAGS
 } ENUM_END_FLAGS(RULEFLAGS);
 
 
+/// Data for a FlockTarget
 struct TargetData
 {
-	Float32 _weight;
-	Float32 _radius;
-	Bool    _infinite;
-	Vector  _position;
+	Float32 _weight;    ///< Weight of this target
+	Float32 _radius;    ///< Radius of this target
+	Bool    _infinite;  ///< Is target radius infinite?
+	Vector  _position;  ///< Global position of target
 
 	TargetData() :
-	  _weight(0.0),
-	  _radius(0.0),
-	  _infinite(false),
-	  _position(0.0)
+		_weight(0.0),
+		_radius(0.0),
+		_infinite(false),
+		_position(0.0)
 	{ }
 	
 	TargetData(Float32 weight, Float32 radius, Bool infinite, const Vector &position) :
-	  _weight(weight), _radius(radius), _infinite(infinite), _position(position)
+		_weight(weight),
+		_radius(radius),
+		_infinite(infinite),
+		_position(position)
 	{ }
 };
 
 
+/// Data for a FlockRepeller
 struct RepellerData
 {
 	Float32 _weight;
@@ -52,18 +58,20 @@ struct RepellerData
 	Vector  _position;
 
 	RepellerData() :
-	  _weight(0.0),
-	  _radius(0.0),
-	  _position(0.0)
+		_weight(0.0),
+		_radius(0.0),
+		_position(0.0)
 	{ }
 	
 	RepellerData(Float32 weight, Float32 radius, const Vector &position) :
-	  _weight(weight), _radius(radius), _position(position)
+		_weight(weight),
+		_radius(radius),
+		_position(position)
 	{ }
 };
 
 
-inline void DrawSphere(BaseDraw* bd, Float32 radius)
+inline void DrawSphere(BaseDraw *bd, Float radius)
 {
 	if (!bd)
 		return;
@@ -80,9 +88,10 @@ inline void DrawSphere(BaseDraw* bd, Float32 radius)
 }
 
 
-inline void Draw3DCross(BaseDraw* bd, Float32 length)
+inline void Draw3DCross(BaseDraw *bd, Float length)
 {
-	if (!bd) return;
+	if (!bd)
+		return;
 
 	Matrix mc;
 	Vector v(DC);
@@ -92,4 +101,4 @@ inline void Draw3DCross(BaseDraw* bd, Float32 length)
 	bd->DrawLine(Vector(0.0, 0.0, length), Vector(0.0, 0.0, -length), 0);
 }
 
-#endif
+#endif // FLOCKHELPERS_H__

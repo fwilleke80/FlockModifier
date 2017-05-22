@@ -14,7 +14,7 @@ public:
 	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual DRAWRESULT Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh);
 
-	static NodeData *Alloc(void)
+	static NodeData *Alloc()
 	{
 		return NewObjClear(FlockTarget);
 	}
@@ -78,22 +78,19 @@ DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, Ba
 
 	bd->SetMatrix_Matrix(op, bh->GetMg());
 	if (bc->GetBool(OFLOCKTARGET_RADIUS_INFINITE))
-	{
 		Draw3DCross(bd, 50.0);
-	}
 	else
-	{
-		DrawSphere(bd, (Float32)bc->GetFloat(OFLOCKTARGET_RADIUS, 50.0));
-	}
+		DrawSphere(bd, bc->GetFloat(OFLOCKTARGET_RADIUS, 50.0));
+	
 	bd->SetMatrix_Matrix(nullptr, Matrix());
 
 	return DRAWRESULT_OK;
 }
 
 
-/****************************************************************************
- * Register Plugin Object
- ****************************************************************************/
+//
+// Register Plugin Object
+//
 Bool RegisterFlockTarget()
 {
 	return RegisterObjectPlugin(ID_OFLOCKTARGET, GeLoadString(IDS_OFLOCKTARGET), 0, FlockTarget::Alloc, "Oflocktarget", AutoBitmap("Oflocktarget.tif"), 0);

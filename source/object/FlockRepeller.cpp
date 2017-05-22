@@ -14,7 +14,10 @@ public:
 	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual DRAWRESULT Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh);
 	
-	static NodeData *Alloc(void) { return NewObjClear(FlockRepeller); }
+	static NodeData *Alloc()
+	{
+		return NewObjClear(FlockRepeller);
+	}
 };
 
 

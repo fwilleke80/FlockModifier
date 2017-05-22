@@ -14,24 +14,17 @@ class FlockModifier : public ObjectData
 	INSTANCEOF(FlockModifier, ObjectData)
 	
 public:
-	FlockModifier()
-	{ }
-	
-	~FlockModifier()
-	{ }
-
-public:
 	virtual Bool Init(GeListNode *node);
 	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual void ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff);
 	
-	static NodeData *Alloc(void)
+	static NodeData *Alloc()
 	{
 		return NewObjClear(FlockModifier);
 	}
 	
 private:
-	AutoFree<GeRayCollider> _collider;
+	AutoFree<GeRayCollider> _geoAvoidanceCollider;
 };
 
 
@@ -106,15 +99,15 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 	Int32 i,j,n;
 
-	BaseContainer* bc = op->GetDataInstance();
-	BaseDocument* doc = op->GetDocument();
+	BaseContainer *bc = op->GetDataInstance();
+	BaseDocument *doc = op->GetDocument();
 	
 	if (!bc || !doc)
 		return;
 
 	// Variables
 	Int32 lCount = pcnt - 1;
-	Vector vParticleDir;
+	Vector vParticleDir(DC);
 
 	// Overall weight
 	Float rWeight = bc->GetFloat(OFLOCK_WEIGHT, 1.0);
@@ -125,24 +118,25 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	rNeighborSightRadius *= rNeighborSightRadius;		// Square
 
 	// Flock Center
-	Vector vCenterflockDir;
+	Vector vCenterflockDir(DC);
 	Float rCenterflockWeight = bc->GetFloat(OFLOCK_CENTER_WEIGHT, 0.0) * 0.1;
 
 	// Neighbor Distance
 	Vector vNeighborDiff(DC);
-	Vector vNeighborDir;
+	Vector vNeighborDir(DC);
 	Float rNeighborWeight = bc->GetFloat(OFLOCK_NEIGHBORDIST_WEIGHT, 0.0) * 0.1;
 	Float rNeighborMinDist = bc->GetFloat(OFLOCK_NEIGHBORDIST_DIST, 0.0);
 
 	// Match Velocity
-	Vector vMatchVelocityDir;
+	Vector vMatchVelocityDir(DC);
 	Float rMatchVelocityWeight = bc->GetFloat(OFLOCK_MATCHVEL_WEIGHT, 0.0) * 0.1;
 
 	// Target
 	Float rTargetGlobalWeight = bc->GetFloat(OFLOCK_TARGET_WEIGHT, 0.0) * 0.1;
 	InExcludeData* inexTarget = (InExcludeData*)bc->GetCustomDataType(OFLOCK_TARGET_LINK, CUSTOMDATATYPE_INEXCLUDE_LIST);
 	Int32 lTargetCount = 0;
-	if (inexTarget) lTargetCount = inexTarget->GetObjectCount();
+	if (inexTarget)
+		lTargetCount = inexTarget->GetObjectCount();
 	maxon::BaseArray<TargetData>targetData;
 
 	// Level flight
@@ -160,17 +154,17 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	Int32 lAvoidGeoMode = bc->GetInt32(OFLOCK_AVOIDGEO_MODE, 1);
 	Float rAvoidGeoWeight = bc->GetFloat(OFLOCK_AVOIDGEO_WEIGHT, 0.0);
 	Float rAvoidGeoDist = bc->GetFloat(OFLOCK_AVOIDGEO_DIST, 0.0);
-	Vector vAvoidGeoDir;
+	Vector vAvoidGeoDir(DC);
 	BaseObject* boAvoidGeoLink = bc->GetObjectLink(OFLOCK_AVOIDGEO_LINK, doc);
-	Matrix mAvoidGeo, mAvoidGeoI;
+	Matrix mAvoidGeo(DC), mAvoidGeoI(DC);
 	Float rAvoidGeoMixval;
 
 	// Turbulence
 	Float rTurbulenceWeight = bc->GetFloat(OFLOCK_TURBULENCE_WEIGHT, 0.0) * 10.0;
 	Float rTurbulenceTime = doc->GetTime().Get() * bc->GetFloat(OFLOCK_TURBULENCE_FREQUENCY, 1.0);
 	Float rTurbulenceScale = 0.1 / ClampValue(bc->GetFloat(OFLOCK_TURBULENCE_SCALE, 1.0), 0.0001, MAXRANGE_FLOAT);
-	Vector rTurbulenceAdd1;
-	Vector rTurbulenceAdd2;
+	Vector rTurbulenceAdd1(DC);
+	Vector rTurbulenceAdd2(DC);
 
 	// Repell
 	Float rRepellGlobalWeight = bc->GetFloat(OFLOCK_REPELL_WEIGHT, 0.0);
@@ -258,14 +252,14 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		rulemask |= RULEFLAGS_AVOIDGEO;
 		
 		// Lazy-alloc collider
-		if (!_collider)
+		if (!_geoAvoidanceCollider)
 		{
-			_collider.Set(GeRayCollider::Alloc());
-			if (!_collider)
+			_geoAvoidanceCollider.Set(GeRayCollider::Alloc());
+			if (!_geoAvoidanceCollider)
 				return;
 		}
 		
-		_collider->Init(boAvoidGeoLink, boAvoidGeoLink->GetDirty(DIRTYFLAGS_CACHE|DIRTYFLAGS_MATRIX|DIRTYFLAGS_DATA));
+		_geoAvoidanceCollider->Init(boAvoidGeoLink, boAvoidGeoLink->GetDirty(DIRTYFLAGS_CACHE|DIRTYFLAGS_MATRIX|DIRTYFLAGS_DATA));
 		mAvoidGeo = boAvoidGeoLink->GetMg();
 		mAvoidGeoI = ~mAvoidGeo;
 	}
@@ -435,11 +429,11 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// --------------
 			if (rulemask & RULEFLAGS_AVOIDGEO)
 			{
-				if (_collider->Intersect(mAvoidGeoI * pp[i].off, mAvoidGeoI.TransformVector(!vParticleDir), rAvoidGeoDist))
+				if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * pp[i].off, mAvoidGeoI.TransformVector(!vParticleDir), rAvoidGeoDist))
 				{
 					GeRayColResult colliderResult;
 
-					if (_collider->GetNearestIntersection(&colliderResult))
+					if (_geoAvoidanceCollider->GetNearestIntersection(&colliderResult))
 					{
 						rAvoidGeoMixval = 1.0 - colliderResult.distance / rAvoidGeoDist;
 						switch (lAvoidGeoMode)
