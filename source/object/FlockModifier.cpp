@@ -97,7 +97,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	if (!op || !pp || !ss)
 		return;
 
-	Int32 i,j,n;
+	Int32 i,j;
 
 	BaseContainer *bc = op->GetDataInstance();
 	BaseDocument *doc = op->GetDocument();
@@ -155,7 +155,6 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	Float fAvoidGeoWeight = bc->GetFloat(OFLOCK_AVOIDGEO_WEIGHT, 0.0);
 	Float fAvoidGeoDist = bc->GetFloat(OFLOCK_AVOIDGEO_DIST, 0.0);
 	Float fAvoidGeoDistI = 1.0 / FMax(fAvoidGeoDist, EPSILON);
-	Vector vAvoidGeoDir(DC);
 	BaseObject* boAvoidGeoLink = bc->GetObjectLink(OFLOCK_AVOIDGEO_LINK, doc);
 	Matrix mAvoidGeo(DC), mAvoidGeoI(DC);
 	Float fAvoidGeoMixval = 0.0;
@@ -189,7 +188,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	if (fNeighborWeight > 0.0)
 	{
 		rulemask |= RULEFLAGS_NEIGHBORDIST;
-		fNeighborMinDist *= fNeighborMinDist;		// Square
+		fNeighborMinDist *= fNeighborMinDist; // Square
 	}
 
 	// Match Flock Velocity
@@ -216,8 +215,8 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	if (((lSpeedMode == OFLOCK_SPEED_MODE_SOFT && fSpeedWeight > 0.0) || lSpeedMode == OFLOCK_SPEED_MODE_HARD))
 	{
 		rulemask |= RULEFLAGS_SPEEDLIMIT;
-		fSpeedMin *= fSpeedMin;   // Square
-		fSpeedMax *= fSpeedMax;   // Square
+		fSpeedMin *= fSpeedMin; // Square
+		fSpeedMax *= fSpeedMax; // Square
 	}
 
 	// Target
@@ -241,8 +240,8 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 					                 tc->GetFloat(OFLOCKTARGET_RADIUS, 0.0),
 					                 tc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, true),
 					                 opListItem->GetMg().off);
-					tdata._radius *= tdata._radius;  // Square radius
-					tdata._radiusI = 1.0 / FMax(tdata._radius, EPSILON);  // Calculate inverse radius
+					tdata._radius *= tdata._radius; // Square radius
+					tdata._radiusI = 1.0 / FMax(tdata._radius, EPSILON); // Calculate inverse radius
 					targetData.Append(tdata);
 				}
 			}
@@ -262,7 +261,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				return;
 		}
 		
-		_geoAvoidanceCollider->Init(boAvoidGeoLink, boAvoidGeoLink->GetDirty(DIRTYFLAGS_CACHE|DIRTYFLAGS_MATRIX|DIRTYFLAGS_DATA));
+		_geoAvoidanceCollider->Init(boAvoidGeoLink);
 		mAvoidGeo = boAvoidGeoLink->GetMg();
 		mAvoidGeoI = ~mAvoidGeo;
 	}
@@ -287,8 +286,8 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 					RepellerData rdata(tc->GetFloat(OFLOCKREPELLER_WEIGHT, 1.0),
 					                   tc->GetFloat(OFLOCKREPELLER_RADIUS, 0.0),
 					                   opListItem->GetMg().off);
-					rdata._radius *= rdata._radius;  // Square radius
-					rdata._radiusI = 1.0 / FMax(rdata._radius, EPSILON);  // Calculate inverse radius
+					rdata._radius *= rdata._radius; // Square radius
+					rdata._radiusI = 1.0 / FMax(rdata._radius, EPSILON); // Calculate inverse radius
 					repellerData.Append(rdata);
 				}
 			}
@@ -299,8 +298,13 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	// Iterate particles
 	for (i = 0; i < pcnt; ++i)
 	{
+		// Store a ref to the current Particle and current BaseParticle, so we don't have to
+		// do all the pointer arithmetics for pp[i].
+		Particle &currentParticle = pp[i];
+		BaseParticle &currentBaseParticle = ss[i];
+		
 		// Skip unwanted particles
-		if (!(pp[i].bits&PARTICLEFLAGS_VISIBLE))
+		if (!(currentParticle.bits&PARTICLEFLAGS_VISIBLE))
 			continue;
 
 		// Reset values
@@ -312,15 +316,19 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		// Iterate other particles
 		for (j = 0; j < pcnt; ++j)
 		{
+			// Store a ref to the current other particle, so we don't have to
+			// do all the pointer arithmetics for pp[j].
+			Particle &currentOtherParticle = pp[j];
+
 			// Skip unwanted particles
-			if (!(pp[j].bits&PARTICLEFLAGS_VISIBLE) || i == j)
+			if (!(currentOtherParticle.bits&PARTICLEFLAGS_VISIBLE) || i == j)
 				continue;
 
 			// General stuff for particle interaction
 			// --------------------------------------
 
 			// Get distance to current particle
-			vNeighborDiff = pp[j].off - pp[i].off;
+			vNeighborDiff = currentOtherParticle.off - currentParticle.off;
 			fNeighborDist = vNeighborDiff.GetSquaredLength();
 
 			// Skip if particles too far away from each other
@@ -331,7 +339,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// ------------
 			if (rulemask&RULEFLAGS_CENTER)
 			{
-				vCenterflockDir += pp[j].off;
+				vCenterflockDir += currentOtherParticle.off;
 			}
 
 			// Neighbor Distance
@@ -346,7 +354,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// --------------
 			if (rulemask&RULEFLAGS_MATCHVELO)
 			{
-				vMatchVelocityDir += pp[j].v3;
+				vMatchVelocityDir += currentOtherParticle.v3;
 			}
 
 			// Increase counter of considered flockmates
@@ -364,7 +372,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// ------------
 			if (rulemask&RULEFLAGS_CENTER)
 			{
-				vParticleDir += ((vCenterflockDir * fCountI) - pp[i].off) * fCenterflockWeight;
+				vParticleDir += ((vCenterflockDir * fCountI) - currentParticle.off) * fCenterflockWeight;
 			}
 
 			// Neighbor Distance
@@ -380,7 +388,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			{
 				for (maxon::BaseArray<TargetData>::Iterator target = targetData.Begin(); target != targetData.End(); ++target)
 				{
-					Vector dist = target->_position - pp[i].off;
+					Vector dist = target->_position - currentParticle.off;
 					Float distLength = dist.GetSquaredLength();
 					if (target->_infinite)
 					{
@@ -397,14 +405,14 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// --------------
 			if (rulemask&RULEFLAGS_MATCHVELO)
 			{
-				vParticleDir += ((vMatchVelocityDir * fCountI) - pp[i].v3) * fMatchVelocityWeight;
+				vParticleDir += ((vMatchVelocityDir * fCountI) - currentParticle.v3) * fMatchVelocityWeight;
 			}
 
 			// Turbulence
 			// ----------
 			if (rulemask&RULEFLAGS_TURBULENCE)
 			{
-				vParticleDir += Vector(SNoise(fTurbulenceScale * pp[i].off, fTurbulenceTime), SNoise(fTurbulenceScale * pp[i].off + vTurbulenceAdd1, fTurbulenceTime), SNoise(fTurbulenceScale * pp[i].off + vTurbulenceAdd2, fTurbulenceTime)) * fTurbulenceWeight;
+				vParticleDir += Vector(SNoise(fTurbulenceScale * currentParticle.off, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd1, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd2, fTurbulenceTime)) * fTurbulenceWeight;
 			}
 
 			// Repell
@@ -413,7 +421,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			{
 				for (maxon::BaseArray<RepellerData>::Iterator repeller = repellerData.Begin(); repeller != repellerData.End(); ++repeller)
 				{
-					Vector dist = repeller->_position - pp[i].off;
+					Vector dist = repeller->_position - currentParticle.off;
 					Float distLength = dist.GetSquaredLength();
 					if (distLength < repeller->_radius)
 						vParticleDir -= dist * (1.0 - distLength * repeller->_radiusI) * repeller->_weight * fRepellGlobalWeight;
@@ -421,7 +429,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			}
 
 			// Add resulting direction to current velocity
-			vParticleDir += pp[i].v3;
+			vParticleDir += currentParticle.v3;
 
 
 			// Level Flight
@@ -435,7 +443,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// --------------
 			if (rulemask&RULEFLAGS_AVOIDGEO)
 			{
-				if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * pp[i].off, mAvoidGeoI.TransformVector(!vParticleDir), fAvoidGeoDist))
+				if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI.TransformVector(!vParticleDir), fAvoidGeoDist))
 				{
 					GeRayColResult colliderResult;
 
@@ -496,10 +504,10 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			}
 
 			// Add resulting velocity, apply overall weight
-			ss[i].v += Blend(pp[i].v3, vParticleDir, fWeight);
+			currentBaseParticle.v += Blend(currentParticle.v3, vParticleDir, fWeight);
 		}
 
-		ss[i].count++;
+		currentBaseParticle.count++;
 	}
 }
 
