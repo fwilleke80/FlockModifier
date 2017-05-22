@@ -47,7 +47,7 @@
 		01BA96D31E9D815700E8F37F /* FlockModifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlockModifier.cpp; sourceTree = "<group>"; };
 		01BA96D41E9D815700E8F37F /* FlockRepeller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlockRepeller.cpp; sourceTree = "<group>"; };
 		01BA96D51E9D815700E8F37F /* FlockTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlockTarget.cpp; sourceTree = "<group>"; };
-		A08C5CDEA3A66833397B0000 /* FlockModifier_R16.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = FlockModifier_R16.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		A08C5CDEA3A66833397B0000 /* FlockModifier.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = FlockModifier.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0A668333900000000000000 /* debugbase.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debugbase.xcconfig; path = ../../frameworks/settings/debugbase.xcconfig; sourceTree = SOURCE_ROOT; };
 		A0A668333900000000050000 /* releasebase.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = releasebase.xcconfig; path = ../../frameworks/settings/releasebase.xcconfig; sourceTree = SOURCE_ROOT; };
 		A0A6683339F470FF41020000 /* cinema.framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = cinema.framework.xcodeproj; path = ../../frameworks/cinema.framework/project/cinema.framework.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -106,7 +106,7 @@
 		A0A668333900000000230000 /* products */ = {
 			isa = PBXGroup;
 			children = (
-				A08C5CDEA3A66833397B0000 /* FlockModifier_R16.dylib */,
+				A08C5CDEA3A66833397B0000 /* FlockModifier.dylib */,
 			);
 			name = products;
 			sourceTree = "<group>";
@@ -162,7 +162,7 @@
 			);
 			name = FlockModifier;
 			productName = cinema4dsdk;
-			productReference = A08C5CDEA3A66833397B0000 /* FlockModifier_R16.dylib */;
+			productReference = A08C5CDEA3A66833397B0000 /* FlockModifier.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */

@@ -14,10 +14,16 @@ public:
 	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual DRAWRESULT Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh);
 	
-	static NodeData *Alloc(void) { return NewObjClear(FlockRepeller); }
+	static NodeData *Alloc()
+	{
+		return NewObjClear(FlockRepeller);
+	}
 };
 
 
+//
+// Initialize attributes
+//
 Bool FlockRepeller::Init(GeListNode *node)
 {
 	if (!node)
@@ -34,6 +40,9 @@ Bool FlockRepeller::Init(GeListNode *node)
 	return SUPER::Init(node);
 }
 
+//
+// Enable/Disable attributes
+//
 Bool FlockRepeller::GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc)
 {
 	if (!node)
@@ -53,6 +62,9 @@ Bool FlockRepeller::GetDEnabling(GeListNode *node, const DescID &id, const GeDat
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
+//
+// Draw viewport representation
+//
 DRAWRESULT FlockRepeller::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
 {
 	if (drawpass != DRAWPASS_OBJECT)
@@ -75,9 +87,9 @@ DRAWRESULT FlockRepeller::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, 
 }
 
 
-/****************************************************************************
- * Register Plugin Object
- ****************************************************************************/
+//
+// Register Plugin Object
+//
 Bool RegisterFlockRepeller()
 {
 	return RegisterObjectPlugin(ID_OFLOCKREPELLER, GeLoadString(IDS_OFLOCKREPELLER), 0, FlockRepeller::Alloc, "Oflockrepeller", AutoBitmap("Oflockrepeller.tif"), 0);
