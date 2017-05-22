@@ -1,4 +1,5 @@
 0.8
+- Fixed bug: "Dead" boids that don't move
 - Lots of internal optimizations
 - Code style
 
