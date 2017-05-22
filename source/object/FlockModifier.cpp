@@ -296,7 +296,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	for (i = 0; i < pcnt; ++i)
 	{
 		// Skip unwanted particles
-		if (!(pp[i].bits & PARTICLEFLAGS_VISIBLE))
+		if (!(pp[i].bits&PARTICLEFLAGS_VISIBLE))
 			continue;
 
 		// Reset values
@@ -309,7 +309,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		for (j = 0; j < pcnt; ++j)
 		{
 			// Skip unwanted particles
-			if (!(pp[j].bits & PARTICLEFLAGS_VISIBLE) || i == j)
+			if (!(pp[j].bits&PARTICLEFLAGS_VISIBLE) || i == j)
 				continue;
 
 			// General stuff for particle interaction
@@ -325,14 +325,14 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			
 			// Flock Center
 			// ------------
-			if (rulemask & RULEFLAGS_CENTER)
+			if (rulemask&RULEFLAGS_CENTER)
 			{
 				vCenterflockDir += pp[j].off;
 			}
 
 			// Neighbor Distance
 			// -----------------
-			if (rulemask & RULEFLAGS_NEIGHBORDIST)
+			if (rulemask&RULEFLAGS_NEIGHBORDIST)
 			{
 				if (rNeighborDist < rNeighborMinDist)
 					vNeighborDir -= vNeighborDiff;
@@ -340,7 +340,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 			// Match Velocity
 			// --------------
-			if (rulemask & RULEFLAGS_MATCHVELO)
+			if (rulemask&RULEFLAGS_MATCHVELO)
 			{
 				vMatchVelocityDir += pp[j].v3;
 			}
@@ -356,14 +356,14 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 			// Flock Center
 			// ------------
-			if (rulemask & RULEFLAGS_CENTER)
+			if (rulemask&RULEFLAGS_CENTER)
 			{
 				vParticleDir += ((vCenterflockDir / lCount) - pp[i].off) * rCenterflockWeight;
 			}
 
 			// Neighbor Distance
 			// -----------------
-			if (rulemask & RULEFLAGS_NEIGHBORDIST)
+			if (rulemask&RULEFLAGS_NEIGHBORDIST)
 			{
 				vParticleDir += vNeighborDir * rNeighborWeight;
 			}
@@ -389,21 +389,21 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 			// Match Velocity
 			// --------------
-			if (rulemask & RULEFLAGS_MATCHVELO)
+			if (rulemask&RULEFLAGS_MATCHVELO)
 			{
 				vParticleDir += ((vMatchVelocityDir / lCount) - pp[i].v3) * rMatchVelocityWeight;
 			}
 
 			// Turbulence
 			// ----------
-			if (rulemask & RULEFLAGS_TURBULENCE)
+			if (rulemask&RULEFLAGS_TURBULENCE)
 			{
 				vParticleDir += Vector(SNoise(rTurbulenceScale * pp[i].off, rTurbulenceTime), SNoise(rTurbulenceScale * pp[i].off + rTurbulenceAdd1, rTurbulenceTime), SNoise(rTurbulenceScale * pp[i].off + rTurbulenceAdd2, rTurbulenceTime)) * rTurbulenceWeight;
 			}
 
 			// Repell
 			// ------
-			if (rulemask  & RULEFLAGS_REPELL)
+			if (rulemask&RULEFLAGS_REPELL)
 			{
 				for (n = 0; n < repellerData.GetCount(); ++n)
 				{
@@ -414,20 +414,20 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				}
 			}
 
-			// Add resulting to current velocity
-			vParticleDir = pp[i].v3 + vParticleDir;
+			// Add resulting direction to current velocity
+			vParticleDir += pp[i].v3;
 
 
 			// Level Flight
 			// ------------
-			if (rulemask & RULEFLAGS_LEVELFLIGHT)
+			if (rulemask&RULEFLAGS_LEVELFLIGHT)
 			{
 				vParticleDir.y -= vParticleDir.y * rLevelFlightWeight;
 			}
 
 			// Avoid Geometry
 			// --------------
-			if (rulemask & RULEFLAGS_AVOIDGEO)
+			if (rulemask&RULEFLAGS_AVOIDGEO)
 			{
 				if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * pp[i].off, mAvoidGeoI.TransformVector(!vParticleDir), rAvoidGeoDist))
 				{
@@ -455,7 +455,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// Speed Limits
 			// ------------
 			rSpeed = vParticleDir.GetSquaredLength() * diff;
-			if (rulemask & RULEFLAGS_SPEEDLIMIT)
+			if (rulemask&RULEFLAGS_SPEEDLIMIT)
 			{
 				switch (lSpeedMode)
 				{
