@@ -29,8 +29,9 @@ enum RULEFLAGS
 /// Data for a FlockTarget
 struct TargetData
 {
-	Float32 _weight;    ///< Weight of this target
-	Float32 _radius;    ///< Radius of this target
+	Float   _weight;    ///< Weight of this target
+	Float   _radius;    ///< Radius of this target
+	Float   _radiusI;   ///< Inverted _radius (for performance reasons)
 	Bool    _infinite;  ///< Is target radius infinite?
 	Vector  _position;  ///< Global position of target
 
@@ -41,7 +42,7 @@ struct TargetData
 		_position(0.0)
 	{ }
 	
-	TargetData(Float32 weight, Float32 radius, Bool infinite, const Vector &position) :
+	TargetData(Float weight, Float radius, Bool infinite, const Vector &position) :
 		_weight(weight),
 		_radius(radius),
 		_infinite(infinite),
@@ -53,9 +54,10 @@ struct TargetData
 /// Data for a FlockRepeller
 struct RepellerData
 {
-	Float32 _weight;
-	Float32 _radius;
-	Vector  _position;
+	Float   _weight;    ///< Weight of this repeller
+	Float   _radius;    ///< Radius of this repeller
+	Float   _radiusI;   ///< Inverted _radius (for performance reasons)
+	Vector  _position;  ///< Global position of repeller
 
 	RepellerData() :
 		_weight(0.0),
@@ -63,7 +65,7 @@ struct RepellerData
 		_position(0.0)
 	{ }
 	
-	RepellerData(Float32 weight, Float32 radius, const Vector &position) :
+	RepellerData(Float weight, Float radius, const Vector &position) :
 		_weight(weight),
 		_radius(radius),
 		_position(position)
