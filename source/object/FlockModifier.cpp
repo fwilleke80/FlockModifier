@@ -498,9 +498,9 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 }
 
 
-/****************************************************************************
- * Register Plugin Object
- ****************************************************************************/
+//
+// Register Plugin Object
+//
 Bool RegisterFlockModifier()
 {
 	return RegisterObjectPlugin(ID_OFLOCKMODIFIER, GeLoadString(IDS_OFLOCK), OBJECT_PARTICLEMODIFIER, FlockModifier::Alloc, "Oflock", AutoBitmap("Oflock.tif"), 0);

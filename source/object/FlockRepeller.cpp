@@ -78,9 +78,9 @@ DRAWRESULT FlockRepeller::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, 
 }
 
 
-/****************************************************************************
- * Register Plugin Object
- ****************************************************************************/
+//
+// Register Plugin Object
+//
 Bool RegisterFlockRepeller()
 {
 	return RegisterObjectPlugin(ID_OFLOCKREPELLER, GeLoadString(IDS_OFLOCKREPELLER), 0, FlockRepeller::Alloc, "Oflockrepeller", AutoBitmap("Oflockrepeller.tif"), 0);
