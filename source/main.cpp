@@ -2,12 +2,12 @@
 #include "main.h"
 
 
-#define PLUGIN_VERSION  String("0.8")
+#define PLUGIN_VERSION  String("FlockModifier 0.7.5")
 
 
 Bool PluginStart()
 {
-	GePrint("FlockModifier " + PLUGIN_VERSION);
+	GePrint(PLUGIN_VERSION);
 	
 	if (!RegisterFlockModifier())
 		return false;
@@ -20,7 +20,8 @@ Bool PluginStart()
 }
 
 void PluginEnd()
-{ }
+{
+}
 
 Bool PluginMessage(Int32 id, void *data)
 {
