@@ -180,32 +180,32 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	RULEFLAGS rulemask = RULEFLAGS_NONE;
 
 	// Center Flock
-	if (!CompareFloatTolerant(fCenterflockWeight, 0.0))
+	if (fCenterflockWeight > 0.0)
 	{
 		rulemask |= RULEFLAGS_CENTER;
 	}
 
 	// Neighbor Distance
-	if (!CompareFloatTolerant(fNeighborWeight, 0.0))
+	if (fNeighborWeight > 0.0)
 	{
 		rulemask |= RULEFLAGS_NEIGHBORDIST;
 		fNeighborMinDist *= fNeighborMinDist;		// Square
 	}
 
 	// Match Flock Velocity
-	if (!CompareFloatTolerant(fMatchVelocityWeight, 0.0))
+	if (fMatchVelocityWeight > 0.0)
 	{
 		rulemask |= RULEFLAGS_MATCHVELO;
 	}
 
 	// Level Flight
-	if (!CompareFloatTolerant(fLevelFlightWeight, 0.0))
+	if (fLevelFlightWeight > 0.0)
 	{
 		rulemask |= RULEFLAGS_LEVELFLIGHT;
 	}
 
 	// Turbulence
-	if (!CompareFloatTolerant(fTurbulenceWeight, 0.0))
+	if (fTurbulenceWeight > 0.0)
 	{
 		rulemask |= RULEFLAGS_TURBULENCE;
 		vTurbulenceAdd1 = Vector(PI * 1000.0);
@@ -213,7 +213,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	}
 
 	// Speed Limit
-	if (((lSpeedMode == OFLOCK_SPEED_MODE_SOFT && !CompareFloatTolerant(fSpeedWeight, 0.0)) || lSpeedMode == OFLOCK_SPEED_MODE_HARD))
+	if (((lSpeedMode == OFLOCK_SPEED_MODE_SOFT && fSpeedWeight > 0.0) || lSpeedMode == OFLOCK_SPEED_MODE_HARD))
 	{
 		rulemask |= RULEFLAGS_SPEEDLIMIT;
 		fSpeedMin *= fSpeedMin;   // Square
@@ -221,7 +221,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	}
 
 	// Target
-	if (!CompareFloatTolerant(fTargetGlobalWeight, 0.0) && inexTarget && lTargetCount > 0)
+	if (fTargetGlobalWeight > 0.0 && inexTarget && lTargetCount > 0)
 	{
 		rulemask |= RULEFLAGS_TARGET;
 
@@ -231,7 +231,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		targetData.Flush();
 		for (i = 0; i < lTargetCount; ++i)
 		{
-			opListItem = (BaseObject*)inexTarget->ObjectFromIndex(doc, i);
+			opListItem = static_cast<BaseObject*>(inexTarget->ObjectFromIndex(doc, i));
 			if (opListItem)
 			{
 				tc = opListItem->GetDataInstance();
@@ -250,7 +250,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	}
 
 	// Avoid Geometry
-	if (((lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && !CompareFloatTolerant(fAvoidGeoWeight, 0.0)) || lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && !CompareFloatTolerant(fAvoidGeoDist, 0.0) && boAvoidGeoLink && boAvoidGeoLink->GetType() == Opolygon && ToPoly(boAvoidGeoLink)->GetPolygonCount() > 0)
+	if (((lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && fAvoidGeoWeight > 0.0) || lAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && fAvoidGeoDist > 0.0 && boAvoidGeoLink && boAvoidGeoLink->GetType() == Opolygon && ToPoly(boAvoidGeoLink)->GetPolygonCount() > 0)
 	{
 		rulemask |= RULEFLAGS_AVOIDGEO;
 		
@@ -268,7 +268,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	}
 
 	// Repelling
-	if (!CompareFloatTolerant(fRepellGlobalWeight, 0.0) && inexRepell && lRepellCount > 0)
+	if (fRepellGlobalWeight > 0.0 && inexRepell && lRepellCount > 0)
 	{
 		rulemask |= RULEFLAGS_REPELL;
 
@@ -278,7 +278,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		repellerData.Flush();
 		for (i = 0; i < lRepellCount; ++i)
 		{
-			opListItem = (BaseObject*)inexRepell->ObjectFromIndex(doc, i);
+			opListItem = static_cast<BaseObject*>(inexRepell->ObjectFromIndex(doc, i));
 			if (opListItem)
 			{
 				tc = opListItem->GetDataInstance();
