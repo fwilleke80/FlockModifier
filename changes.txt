@@ -1,3 +1,7 @@
+0.8
+- Lots of internal optimizations
+- Code style
+
 0.7.1
 - Only internal changes
 - Lazy initialization for GeRayCollider
