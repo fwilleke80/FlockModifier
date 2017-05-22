@@ -154,6 +154,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	Int32 lAvoidGeoMode = bc->GetInt32(OFLOCK_AVOIDGEO_MODE, 1);
 	Float rAvoidGeoWeight = bc->GetFloat(OFLOCK_AVOIDGEO_WEIGHT, 0.0);
 	Float rAvoidGeoDist = bc->GetFloat(OFLOCK_AVOIDGEO_DIST, 0.0);
+	Float rAvoidGeoDistI = 1.0 / FMax(rAvoidGeoDist, EPSILON);
 	Vector vAvoidGeoDir(DC);
 	BaseObject* boAvoidGeoLink = bc->GetObjectLink(OFLOCK_AVOIDGEO_LINK, doc);
 	Matrix mAvoidGeo(DC), mAvoidGeoI(DC);
@@ -435,7 +436,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 					if (_geoAvoidanceCollider->GetNearestIntersection(&colliderResult))
 					{
-						rAvoidGeoMixval = 1.0 - colliderResult.distance / rAvoidGeoDist;
+						rAvoidGeoMixval = 1.0 - colliderResult.distance * rAvoidGeoDistI;
 						switch (lAvoidGeoMode)
 						{
 							case OFLOCK_AVOIDGEO_MODE_SOFT:
@@ -454,21 +455,21 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 			// Speed Limits
 			// ------------
-			rSpeed = vParticleDir.GetSquaredLength() * diff;
 			if (rulemask&RULEFLAGS_SPEEDLIMIT)
 			{
+				rSpeed = vParticleDir.GetSquaredLength() * diff;
 				switch (lSpeedMode)
 				{
 					case OFLOCK_SPEED_MODE_SOFT:
 						{
 							if (rSpeed < rSpeedMin)
 							{
-								rSpeedRatio = rSpeedMin / FMax(rSpeed, 0.001);
+								rSpeedRatio = rSpeedMin / FMax(rSpeed, EPSILON);
 								vParticleDir *= Blend(1.0, rSpeedRatio, rSpeedWeight);
 							}
 							else if (rSpeed > rSpeedMax)
 							{
-								rSpeedRatio = rSpeedMax / FMax(rSpeed, 0.001);
+								rSpeedRatio = rSpeedMax / FMax(rSpeed, EPSILON);
 								vParticleDir *= Blend(1.0, rSpeedRatio, rSpeedWeight);
 							}
 						}
