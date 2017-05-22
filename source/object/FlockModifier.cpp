@@ -361,7 +361,8 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			lCount++;
 		}
 
-		// Apply any particle interaction that took place
+		// If any other particles have been taken into account for the precalculations,
+		// apply any particle interaction that took place
 		if (lCount > 1)
 		{
 			/* ------------------- Soft Rules --------------------------- */
@@ -372,7 +373,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// ------------
 			if (rulemask&RULEFLAGS_CENTER)
 			{
-				vParticleDir += ((vCenterflockDir * fCountI) - currentParticle.off) * fCenterflockWeight;
+				vParticleDir += (vCenterflockDir * fCountI - currentParticle.off) * fCenterflockWeight;
 			}
 
 			// Neighbor Distance
@@ -382,130 +383,130 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				vParticleDir += vNeighborDir * fNeighborWeight;
 			}
 
-			// Target
-			// ------
-			if (rulemask & RULEFLAGS_TARGET)
-			{
-				for (maxon::BaseArray<TargetData>::Iterator target = targetData.Begin(); target != targetData.End(); ++target)
-				{
-					Vector dist = target->_position - currentParticle.off;
-					Float distLength = dist.GetSquaredLength();
-					if (target->_infinite)
-					{
-						vParticleDir += dist * target->_weight * fTargetGlobalWeight;
-					}
-					else if (distLength < target->_radius)
-					{
-						vParticleDir += dist * (1.0 - distLength * target->_radiusI) * target->_weight * fTargetGlobalWeight;
-					}
-				}
-			}
-
 			// Match Velocity
 			// --------------
 			if (rulemask&RULEFLAGS_MATCHVELO)
 			{
 				vParticleDir += ((vMatchVelocityDir * fCountI) - currentParticle.v3) * fMatchVelocityWeight;
 			}
+		}
 
-			// Turbulence
-			// ----------
-			if (rulemask&RULEFLAGS_TURBULENCE)
+		// Target
+		// ------
+		if (rulemask&RULEFLAGS_TARGET)
+		{
+			for (maxon::BaseArray<TargetData>::Iterator target = targetData.Begin(); target != targetData.End(); ++target)
 			{
-				vParticleDir += Vector(SNoise(fTurbulenceScale * currentParticle.off, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd1, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd2, fTurbulenceTime)) * fTurbulenceWeight;
-			}
-
-			// Repell
-			// ------
-			if (rulemask&RULEFLAGS_REPELL)
-			{
-				for (maxon::BaseArray<RepellerData>::Iterator repeller = repellerData.Begin(); repeller != repellerData.End(); ++repeller)
+				Vector dist = target->_position - currentParticle.off;
+				Float distLength = dist.GetSquaredLength();
+				if (target->_infinite)
 				{
-					Vector dist = repeller->_position - currentParticle.off;
-					Float distLength = dist.GetSquaredLength();
-					if (distLength < repeller->_radius)
-						vParticleDir -= dist * (1.0 - distLength * repeller->_radiusI) * repeller->_weight * fRepellGlobalWeight;
+					vParticleDir += dist * target->_weight * fTargetGlobalWeight;
+				}
+				else if (distLength < target->_radius)
+				{
+					vParticleDir += dist * (1.0 - distLength * target->_radiusI) * target->_weight * fTargetGlobalWeight;
 				}
 			}
-
-			// Add resulting direction to current velocity
-			vParticleDir += currentParticle.v3;
-
-
-			// Level Flight
-			// ------------
-			if (rulemask&RULEFLAGS_LEVELFLIGHT)
+		}
+		
+		// Turbulence
+		// ----------
+		if (rulemask&RULEFLAGS_TURBULENCE)
+		{
+			vParticleDir += Vector(SNoise(fTurbulenceScale * currentParticle.off, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd1, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd2, fTurbulenceTime)) * fTurbulenceWeight;
+		}
+		
+		// Repell
+		// ------
+		if (rulemask&RULEFLAGS_REPELL)
+		{
+			for (maxon::BaseArray<RepellerData>::Iterator repeller = repellerData.Begin(); repeller != repellerData.End(); ++repeller)
 			{
-				vParticleDir.y -= vParticleDir.y * fLevelFlightWeight;
+				Vector dist = repeller->_position - currentParticle.off;
+				Float distLength = dist.GetSquaredLength();
+				if (distLength < repeller->_radius)
+					vParticleDir -= dist * (1.0 - distLength * repeller->_radiusI) * repeller->_weight * fRepellGlobalWeight;
 			}
-
-			// Avoid Geometry
-			// --------------
-			if (rulemask&RULEFLAGS_AVOIDGEO)
+		}
+		
+		// Add resulting direction to current velocity
+		vParticleDir += currentParticle.v3;
+		
+		
+		// Level Flight
+		// ------------
+		if (rulemask&RULEFLAGS_LEVELFLIGHT)
+		{
+			vParticleDir.y -= vParticleDir.y * fLevelFlightWeight;
+		}
+		
+		// Avoid Geometry
+		// --------------
+		if (rulemask&RULEFLAGS_AVOIDGEO)
+		{
+			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI.TransformVector(!vParticleDir), fAvoidGeoDist))
 			{
-				if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI.TransformVector(!vParticleDir), fAvoidGeoDist))
+				GeRayColResult colliderResult;
+				
+				if (_geoAvoidanceCollider->GetNearestIntersection(&colliderResult))
 				{
-					GeRayColResult colliderResult;
-
-					if (_geoAvoidanceCollider->GetNearestIntersection(&colliderResult))
+					fAvoidGeoMixval = 1.0 - colliderResult.distance * fAvoidGeoDistI;
+					switch (lAvoidGeoMode)
 					{
-						fAvoidGeoMixval = 1.0 - colliderResult.distance * fAvoidGeoDistI;
-						switch (lAvoidGeoMode)
-						{
-							case OFLOCK_AVOIDGEO_MODE_SOFT:
-								vParticleDir = vParticleDir + mAvoidGeo.TransformVector(!colliderResult.s_normal) * vParticleDir.GetLength() * fAvoidGeoMixval * fAvoidGeoWeight;
-								break;
-
-							default:
-							case OFLOCK_AVOIDGEO_MODE_HARD:
-								vParticleDir = Blend(mAvoidGeo.TransformVector((!colliderResult.s_normal * vParticleDir.GetLength())), vParticleDir, fAvoidGeoMixval);
-								break;
-						}
+						case OFLOCK_AVOIDGEO_MODE_SOFT:
+							vParticleDir = vParticleDir + mAvoidGeo.TransformVector(!colliderResult.s_normal) * vParticleDir.GetLength() * fAvoidGeoMixval * fAvoidGeoWeight;
+							break;
+							
+						default:
+						case OFLOCK_AVOIDGEO_MODE_HARD:
+							vParticleDir = Blend(mAvoidGeo.TransformVector((!colliderResult.s_normal * vParticleDir.GetLength())), vParticleDir, fAvoidGeoMixval);
+							break;
 					}
 				}
 			}
-
-
-			// Speed Limits
-			// ------------
-			if (rulemask&RULEFLAGS_SPEEDLIMIT)
-			{
-				fSpeed = vParticleDir.GetSquaredLength() * diff;
-				switch (lSpeedMode)
-				{
-					case OFLOCK_SPEED_MODE_SOFT:
-						{
-							if (fSpeed < fSpeedMin)
-							{
-								fSpeedRatio = fSpeedMin / FMax(fSpeed, EPSILON);
-								vParticleDir *= Blend(1.0, fSpeedRatio, fSpeedWeight);
-							}
-							else if (fSpeed > fSpeedMax)
-							{
-								fSpeedRatio = fSpeedMax / FMax(fSpeed, EPSILON);
-								vParticleDir *= Blend(1.0, fSpeedRatio, fSpeedWeight);
-							}
-						}
-						break;
-
-					case OFLOCK_SPEED_MODE_HARD:
-						{
-							if (fSpeed < fSpeedMin)
-							{
-								vParticleDir = !vParticleDir * fSpeedMin;
-							}
-							else if (fSpeed > fSpeedMax)
-							{
-								vParticleDir = !vParticleDir * fSpeedMax;
-							}
-						}
-						break;
-				}
-			}
-
-			// Add resulting velocity, apply overall weight
-			currentBaseParticle.v += Blend(currentParticle.v3, vParticleDir, fWeight);
 		}
+		
+		
+		// Speed Limits
+		// ------------
+		if (rulemask&RULEFLAGS_SPEEDLIMIT)
+		{
+			fSpeed = vParticleDir.GetSquaredLength() * diff;
+			switch (lSpeedMode)
+			{
+				case OFLOCK_SPEED_MODE_SOFT:
+				{
+					if (fSpeed < fSpeedMin)
+					{
+						fSpeedRatio = fSpeedMin / FMax(fSpeed, EPSILON);
+						vParticleDir *= Blend(1.0, fSpeedRatio, fSpeedWeight);
+					}
+					else if (fSpeed > fSpeedMax)
+					{
+						fSpeedRatio = fSpeedMax / FMax(fSpeed, EPSILON);
+						vParticleDir *= Blend(1.0, fSpeedRatio, fSpeedWeight);
+					}
+				}
+					break;
+					
+				case OFLOCK_SPEED_MODE_HARD:
+				{
+					if (fSpeed < fSpeedMin)
+					{
+						vParticleDir = !vParticleDir * fSpeedMin;
+					}
+					else if (fSpeed > fSpeedMax)
+					{
+						vParticleDir = !vParticleDir * fSpeedMax;
+					}
+				}
+					break;
+			}
+		}
+		
+		// Add resulting velocity, apply overall weight
+		currentBaseParticle.v += Blend(currentParticle.v3, vParticleDir, fWeight);
 
 		currentBaseParticle.count++;
 	}
