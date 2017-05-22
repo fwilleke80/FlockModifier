@@ -36,7 +36,7 @@ Bool FlockModifier::Init(GeListNode *node)
 	if (!node)
 		return false;
 
-	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
+	BaseContainer *bc = static_cast<BaseObject*>(node)->GetDataInstance();
 	if (!bc)
 		return false;
 
@@ -71,7 +71,7 @@ Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData
 	if (!node)
 		return false;
 	
-	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
+	BaseContainer *bc = static_cast<BaseObject*>(node)->GetDataInstance();
 	if (!bc)
 		return false;
 	
@@ -378,17 +378,17 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// ------
 			if (rulemask & RULEFLAGS_TARGET)
 			{
-				for (n = 0; n < targetData.GetCount(); ++n)
+				for (maxon::BaseArray<TargetData>::Iterator target = targetData.Begin(); target != targetData.End(); ++target)
 				{
-					Vector dist = targetData[n]._position - pp[i].off;
+					Vector dist = target->_position - pp[i].off;
 					Float distLength = dist.GetSquaredLength();
-					if (targetData[n]._infinite)
+					if (target->_infinite)
 					{
-						vParticleDir += dist * targetData[n]._weight * fTargetGlobalWeight;
+						vParticleDir += dist * target->_weight * fTargetGlobalWeight;
 					}
-					else if (distLength < targetData[n]._radius)
+					else if (distLength < target->_radius)
 					{
-						vParticleDir += dist * (1.0 - distLength * targetData[n]._radiusI) * targetData[n]._weight * fTargetGlobalWeight;
+						vParticleDir += dist * (1.0 - distLength * target->_radiusI) * target->_weight * fTargetGlobalWeight;
 					}
 				}
 			}
@@ -411,12 +411,12 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// ------
 			if (rulemask&RULEFLAGS_REPELL)
 			{
-				for (n = 0; n < repellerData.GetCount(); ++n)
+				for (maxon::BaseArray<RepellerData>::Iterator repeller = repellerData.Begin(); repeller != repellerData.End(); ++repeller)
 				{
-					Vector dist = repellerData[n]._position - pp[i].off;
+					Vector dist = repeller->_position - pp[i].off;
 					Float distLength = dist.GetSquaredLength();
-					if (distLength < repellerData[n]._radius)
-						vParticleDir -= dist * (1.0 - distLength * repellerData[n]._radiusI) * repellerData[n]._weight * fRepellGlobalWeight;
+					if (distLength < repeller->_radius)
+						vParticleDir -= dist * (1.0 - distLength * repeller->_radiusI) * repeller->_weight * fRepellGlobalWeight;
 				}
 			}
 
