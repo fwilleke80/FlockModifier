@@ -21,6 +21,9 @@ public:
 };
 
 
+//
+// Initialize attributes
+//
 Bool FlockTarget::Init(GeListNode *node)
 {
 	if (!node)
@@ -38,6 +41,9 @@ Bool FlockTarget::Init(GeListNode *node)
 	return SUPER::Init(node);
 }
 
+//
+// Enable/Disable attributes
+//
 Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc)
 {
 	if (!node)
@@ -62,6 +68,9 @@ Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData 
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
+//
+// Draw viewport representation
+//
 DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
 {
 	if (drawpass != DRAWPASS_OBJECT)

@@ -24,13 +24,13 @@ public:
 	}
 	
 private:
-	AutoFree<GeRayCollider> _geoAvoidanceCollider;
+	AutoFree<GeRayCollider> _geoAvoidanceCollider; ///< GeRayCollider for "Avoid Geometry" rule
 };
 
 
-/****************************************************************************
- * Initialize attributes
- ****************************************************************************/
+//
+// Initialize attributes
+//
 Bool FlockModifier::Init(GeListNode *node)
 {
 	if (!node)
@@ -63,9 +63,9 @@ Bool FlockModifier::Init(GeListNode *node)
 	return SUPER::Init(node);
 }
 
-/****************************************************************************
- * Enable/Disable attributes
- ****************************************************************************/
+//
+// Enable/Disable attributes
+//
 Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData &t_data,DESCFLAGS_ENABLE flags,const BaseContainer *itemdesc)
 {
 	if (!node)
@@ -89,9 +89,9 @@ Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
-/****************************************************************************
- * Simulate flock
- ****************************************************************************/
+//
+// Simulate flock
+//
 void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff)
 {
 	if (!op || !pp || !ss)
