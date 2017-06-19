@@ -12,6 +12,8 @@
 		010089471DCA8ABB00F0EF13 /* FlockModifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 010089421DCA8ABB00F0EF13 /* FlockModifier.cpp */; };
 		010089481DCA8ABB00F0EF13 /* FlockRepeller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 010089431DCA8ABB00F0EF13 /* FlockRepeller.cpp */; };
 		010089491DCA8ABB00F0EF13 /* FlockTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 010089441DCA8ABB00F0EF13 /* FlockTarget.cpp */; };
+		012CDC981EF7B5F60083BE1A /* particletools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 012CDC961EF7B5F60083BE1A /* particletools.cpp */; };
+		012CDC991EF7B5F60083BE1A /* particletools.h in Headers */ = {isa = PBXBuildFile; fileRef = 012CDC971EF7B5F60083BE1A /* particletools.h */; };
 		A0A6683339F470FF41010000 /* libcinema.framework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A6683339F470FF41000000 /* libcinema.framework.a */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +48,8 @@
 		010089431DCA8ABB00F0EF13 /* FlockRepeller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = FlockRepeller.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		010089441DCA8ABB00F0EF13 /* FlockTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = FlockTarget.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		0100894A1DCA967800F0EF13 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = main.h; path = source/main.h; sourceTree = SOURCE_ROOT; };
+		012CDC961EF7B5F60083BE1A /* particletools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = particletools.cpp; path = source/particletools.cpp; sourceTree = SOURCE_ROOT; };
+		012CDC971EF7B5F60083BE1A /* particletools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = particletools.h; path = source/particletools.h; sourceTree = SOURCE_ROOT; };
 		8ACD68381C66E7D100F34089 /* sanitizerbase.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = sanitizerbase.xcconfig; path = ../../frameworks/settings/sanitizerbase.xcconfig; sourceTree = "<group>"; };
 		A08C5CDEA3A66833397B0000 /* FlockModifier.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = FlockModifier.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0A668333900000000000000 /* debugbase.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debugbase.xcconfig; path = ../../frameworks/settings/debugbase.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -116,9 +120,11 @@
 			isa = PBXGroup;
 			children = (
 				010089411DCA8ABB00F0EF13 /* object */,
-				0100893F1DCA8ABB00F0EF13 /* helpers.h */,
-				010089401DCA8ABB00F0EF13 /* main.cpp */,
 				0100894A1DCA967800F0EF13 /* main.h */,
+				010089401DCA8ABB00F0EF13 /* main.cpp */,
+				0100893F1DCA8ABB00F0EF13 /* helpers.h */,
+				012CDC971EF7B5F60083BE1A /* particletools.h */,
+				012CDC961EF7B5F60083BE1A /* particletools.cpp */,
 			);
 			name = source;
 			path = ../source;
@@ -140,6 +146,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				012CDC991EF7B5F60083BE1A /* particletools.h in Headers */,
 				010089451DCA8ABB00F0EF13 /* helpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -221,6 +228,7 @@
 			files = (
 				010089471DCA8ABB00F0EF13 /* FlockModifier.cpp in Sources */,
 				010089481DCA8ABB00F0EF13 /* FlockRepeller.cpp in Sources */,
+				012CDC981EF7B5F60083BE1A /* particletools.cpp in Sources */,
 				010089491DCA8ABB00F0EF13 /* FlockTarget.cpp in Sources */,
 				010089461DCA8ABB00F0EF13 /* main.cpp in Sources */,
 			);

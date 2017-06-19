@@ -6,6 +6,7 @@
 #include "Oflocktarget.h"
 #include "Oflockrepeller.h"
 #include "helpers.h"
+#include "particletools.h"
 #include "main.h"
 
 
@@ -17,6 +18,8 @@ public:
 	virtual Bool Init(GeListNode *node);
 	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual void ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff);
+	virtual EXECUTIONRESULT Execute(BaseObject* op, BaseDocument* doc, BaseThread* bt, Int32 priority, EXECUTIONFLAGS flags);
+	virtual Bool AddToExecution(BaseObject* op, PriorityList* list);
 	
 	static NodeData *Alloc()
 	{
@@ -25,6 +28,7 @@ public:
 	
 private:
 	AutoFree<GeRayCollider> _geoAvoidanceCollider; ///< GeRayCollider for "Avoid Geometry" rule
+	ParticleAssignmentMap particleInfo;
 };
 
 
@@ -292,6 +296,10 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		}
 	}
 
+	// Nearest other particle
+	Int32 nearestNeighborId = NOTOK;
+	Float nearestNeighborDistance = MAXRANGE_FLOAT;
+	Vector nearestNeighborPosition;
 
 	// Iterate particles
 	for (i = 0; i < pcnt; ++i)
@@ -333,6 +341,13 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			if (fNeighborDist > fNeighborSightRadius)
 				continue;
 			
+			// Memorize nearest neighbor boid
+			if (fNeighborDist < nearestNeighborDistance)
+			{
+				nearestNeighborDistance = fNeighborDist;
+				nearestNeighborId = j;
+			}
+			
 			// Flock Center
 			// ------------
 			if (rulemask&RULEFLAGS_CENTER)
@@ -353,6 +368,20 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			if (rulemask&RULEFLAGS_MATCHVELO)
 			{
 				vMatchVelocityDir += currentOtherParticle.v3;
+			}
+			
+			// HACK 1: Normal boids flee from predator
+			if (GetParticleInfo(i, particleInfo).role == PARTICLEROLE_NORMAL && GetParticleInfo(j, particleInfo).role == PARTICLEROLE_PREDATOR)
+			{
+				Float radius = 200.0;
+				radius *= radius;
+				Vector dist = currentOtherParticle.off - currentParticle.off;
+				Float distLength = dist.GetSquaredLength();
+				if (distLength < radius)
+				{
+					Float fak = 1.0 - distLength / radius;
+					vParticleDir -= dist * fak * 0.2;
+				}
 			}
 
 			// Increase counter of considered flockmates
@@ -426,6 +455,19 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				if (distLength < repeller->_radius)
 					vParticleDir -= dist * (1.0 - distLength * repeller->_radiusI) * repeller->_weight * fRepellGlobalWeight;
 			}
+		}
+		
+		// HACK 2: Predator chases nearest normal boid
+		if (GetParticleInfo(i, particleInfo).role == PARTICLEROLE_PREDATOR && GetParticleInfo(nearestNeighborId, particleInfo).role == PARTICLEROLE_NORMAL)
+		{
+			Float radius = 750.0;
+			radius *= radius;
+			
+			Vector dist = pp[nearestNeighborId].off - currentParticle.off;
+			Float distLength = dist.GetSquaredLength();
+			
+			if (distLength < radius)
+				vParticleDir += dist * 0.5;
 		}
 		
 		// Add resulting direction to current velocity
@@ -510,11 +552,29 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	}
 }
 
+EXECUTIONRESULT FlockModifier::Execute(BaseObject* op, BaseDocument* doc, BaseThread* bt, Int32 priority, EXECUTIONFLAGS flags)
+{
+	if (!op || !doc)
+		return EXECUTIONRESULT_OUTOFMEMORY;
+	
+	if (!BuildParticleAssignmentMap(op, particleInfo))
+		return EXECUTIONRESULT_OUTOFMEMORY;
+	
+	return EXECUTIONRESULT_OK;
+}
+
+Bool FlockModifier::AddToExecution(BaseObject* op, PriorityList* list)
+{
+	list->Add(op, EXECUTIONPRIORITY_FORCE, EXECUTIONFLAGS_0);
+	
+	return true;
+}
+
 
 //
 // Register Plugin Object
 //
 Bool RegisterFlockModifier()
 {
-	return RegisterObjectPlugin(ID_OFLOCKMODIFIER, GeLoadString(IDS_OFLOCK), OBJECT_PARTICLEMODIFIER, FlockModifier::Alloc, "Oflock", AutoBitmap("Oflock.tif"), 0);
+	return RegisterObjectPlugin(ID_OFLOCKMODIFIER, GeLoadString(IDS_OFLOCK), OBJECT_PARTICLEMODIFIER|OBJECT_CALL_ADDEXECUTION, FlockModifier::Alloc, "Oflock", AutoBitmap("Oflock.tif"), 0);
 }
