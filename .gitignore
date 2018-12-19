@@ -6,6 +6,7 @@
 *.xcscheme
 *.plist
 *.dylib
+*.xlib
 
 # Windows files
 *.exp
@@ -15,3 +16,10 @@
 *.tlog
 *.lastbuildstate
 *.obj
+*.xdl64
+
+# Misc files
+*.msg
+*.stamp
+*.hxx
+*.ph
