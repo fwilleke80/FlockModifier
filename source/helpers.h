@@ -1,6 +1,7 @@
 #ifndef FLOCKHELPERS_H__
 #define FLOCKHELPERS_H__
 
+#include "c4d.h"
 
 const Int32 ID_OFLOCKMODIFIER = 1029168;
 const Int32 ID_OFLOCKREPELLER = 1029184;
@@ -23,7 +24,7 @@ enum RULEFLAGS
 	RULEFLAGS_TURBULENCE    = (1<<6),
 	RULEFLAGS_SPEEDLIMIT    = (1<<7),
 	RULEFLAGS_REPELL        = (1<<8)
-} ENUM_END_FLAGS(RULEFLAGS);
+} MAXON_ENUM_FLAGS(RULEFLAGS);
 
 
 /// Data for a FlockTarget
@@ -81,11 +82,11 @@ inline void DrawSphere(BaseDraw *bd, Float radius)
 	Matrix mc;
 	Vector v(DC);
 
-	mc.Scale(radius);
+	mc = mc * radius;
 	bd->DrawCircle(mc);
-	v = mc.v3; mc.v3 = mc.v2; mc.v2 = v;
+	v = mc.sqmat.v3; mc.sqmat.v3 = mc.sqmat.v2; mc.sqmat.v2 = v;
 	bd->DrawCircle(mc);
-	v = mc.v1; mc.v1 = mc.v3; mc.v3 = v;
+	v = mc.sqmat.v1; mc.sqmat.v1 = mc.sqmat.v3; mc.sqmat.v3 = v;
 	bd->DrawCircle(mc);
 }
 

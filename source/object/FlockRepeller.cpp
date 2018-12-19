@@ -67,15 +67,15 @@ Bool FlockRepeller::GetDEnabling(GeListNode *node, const DescID &id, const GeDat
 //
 DRAWRESULT FlockRepeller::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
 {
-	if (drawpass != DRAWPASS_OBJECT)
-		return DRAWRESULT_SKIP;
+	if (drawpass != DRAWPASS::OBJECT)
+		return DRAWRESULT::SKIP;
 	
 	if (!op || !bd || !bh)
-		return DRAWRESULT_ERROR;
+		return DRAWRESULT::FAILURE;
 
 	BaseContainer* bc = op->GetDataInstance();
 	if (!bc)
-		return DRAWRESULT_ERROR;
+		return DRAWRESULT::FAILURE;
 
 	bd->SetPen(COLOR_FLOCKREPELLER * bc->GetFloat(OFLOCKREPELLER_WEIGHT));
 
@@ -83,7 +83,7 @@ DRAWRESULT FlockRepeller::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, 
 	DrawSphere(bd, (Float32)bc->GetFloat(OFLOCKREPELLER_RADIUS));
 	bd->SetMatrix_Matrix(nullptr, Matrix());
 
-	return DRAWRESULT_OK;
+	return DRAWRESULT::OK;
 }
 
 
@@ -92,5 +92,5 @@ DRAWRESULT FlockRepeller::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, 
 //
 Bool RegisterFlockRepeller()
 {
-	return RegisterObjectPlugin(ID_OFLOCKREPELLER, GeLoadString(IDS_OFLOCKREPELLER), 0, FlockRepeller::Alloc, "Oflockrepeller", AutoBitmap("Oflockrepeller.tif"), 0);
+	return RegisterObjectPlugin(ID_OFLOCKREPELLER, GeLoadString(IDS_OFLOCKREPELLER), 0, FlockRepeller::Alloc, "Oflockrepeller"_s, AutoBitmap("Oflockrepeller.tif"_s), 0);
 }
