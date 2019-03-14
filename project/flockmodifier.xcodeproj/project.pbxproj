@@ -7,13 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		015A7C6D21CA5CAB004D9D65 /* Oflock.h in Headers */ = {isa = PBXBuildFile; fileRef = A022A104685188D3BE000000 /* Oflock.h */; };
-		015A7C6E21CA5CAB004D9D65 /* Oflockrepeller.h in Headers */ = {isa = PBXBuildFile; fileRef = A022A10468F24AE013000000 /* Oflockrepeller.h */; };
-		015A7C6F21CA5CAB004D9D65 /* Oflocktarget.h in Headers */ = {isa = PBXBuildFile; fileRef = A022A10468CEE8C20F000000 /* Oflocktarget.h */; };
-		015A7C7021CA5CAE004D9D65 /* helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A022A104689A71664B000000 /* helpers.h */; };
-		015A7C7121CA5CAE004D9D65 /* main.h in Headers */ = {isa = PBXBuildFile; fileRef = A022A104681837B5E7000000 /* main.h */; };
 		A022A104682BB65ABB010000 /* FlockTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A022A104682BB65ABB000000 /* FlockTarget.cpp */; };
 		A022A104685341EFC1010000 /* FlockModifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A022A104685341EFC1000000 /* FlockModifier.cpp */; };
+		A022A104686542540E010000 /* libmesh_misc.framework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A022A104686542540E000000 /* libmesh_misc.framework.a */; };
+		A022A104688A3C2298010000 /* libmath.framework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A022A104688A3C2298000000 /* libmath.framework.a */; };
 		A022A10468D9247F7F010000 /* FlockRepeller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A022A10468D9247F7F000000 /* FlockRepeller.cpp */; };
 		A022A10468D93CCD9F010000 /* register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A022A10468D93CCD9F000000 /* register.cpp */; };
 		A022A10468E921D362010000 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A022A10468E921D362000000 /* main.cpp */; };
@@ -22,12 +19,61 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		A022A104686542540E040000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A104686542540E020000 /* mesh_misc.framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A08C5CDEA36542540E7B0000;
+			remoteInfo = mesh_misc.framework;
+		};
+		A022A104686542540E040100 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A104686542540E020000 /* mesh_misc.framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A08C5CDEA36542540E7B0100;
+			remoteInfo = "mesh_misc.framework static library";
+		};
+		A022A104686542540E050000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A104686542540E020000 /* mesh_misc.framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A08C5CDEA36542540E000000;
+			remoteInfo = mesh_misc.framework;
+		};
+		A022A104688A3C2298040000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A104688A3C2298020000 /* math.framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A08C5CDEA38A3C22987B0000;
+			remoteInfo = math.framework;
+		};
+		A022A104688A3C2298040100 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A104688A3C2298020000 /* math.framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A08C5CDEA38A3C22987B0100;
+			remoteInfo = "math.framework static library";
+		};
+		A022A104688A3C2298050000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A104688A3C2298020000 /* math.framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A08C5CDEA38A3C2298000000;
+			remoteInfo = math.framework;
+		};
 		A022A10468F470FF41040000 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A022A10468F470FF41020000 /* cinema.framework.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = A08C5CDEA3F470FF417B0000;
 			remoteInfo = cinema.framework;
+		};
+		A022A10468F470FF41040100 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A10468F470FF41020000 /* cinema.framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A08C5CDEA3F470FF417B0100;
+			remoteInfo = "cinema.framework static library";
 		};
 		A022A10468F470FF41050000 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -42,6 +88,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = A08C5CDEA3F4AB3A6F7B0000;
 			remoteInfo = core.framework;
+		};
+		A022A10468F4AB3A6F040100 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A022A10468F4AB3A6F020000 /* core.framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A08C5CDEA3F4AB3A6F7B0100;
+			remoteInfo = "core.framework static library";
 		};
 		A022A10468F4AB3A6F050000 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -60,6 +113,8 @@
 		A022A10468448F46FA000000 /* c4d_symbols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c4d_symbols.h; path = ../res/c4d_symbols.h; sourceTree = SOURCE_ROOT; };
 		A022A104685188D3BE000000 /* Oflock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Oflock.h; path = ../res/description/Oflock.h; sourceTree = SOURCE_ROOT; };
 		A022A104685341EFC1000000 /* FlockModifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlockModifier.cpp; path = ../source/object/FlockModifier.cpp; sourceTree = SOURCE_ROOT; };
+		A022A104686542540E020000 /* mesh_misc.framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mesh_misc.framework.xcodeproj; path = ../../../frameworks/mesh_misc.framework/project/mesh_misc.framework.xcodeproj; sourceTree = SOURCE_ROOT; };
+		A022A104688A3C2298020000 /* math.framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = math.framework.xcodeproj; path = ../../../frameworks/math.framework/project/math.framework.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A022A104689A71664B000000 /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helpers.h; path = ../source/helpers.h; sourceTree = SOURCE_ROOT; };
 		A022A10468CEE8C20F000000 /* Oflocktarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Oflocktarget.h; path = ../res/description/Oflocktarget.h; sourceTree = SOURCE_ROOT; };
 		A022A10468D9247F7F000000 /* FlockRepeller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlockRepeller.cpp; path = ../source/object/FlockRepeller.cpp; sourceTree = SOURCE_ROOT; };
@@ -77,6 +132,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A022A104686542540E010000 /* libmesh_misc.framework.a in Frameworks */,
+				A022A104688A3C2298010000 /* libmath.framework.a in Frameworks */,
 				A022A10468F470FF41010000 /* libcinema.framework.a in Frameworks */,
 				A022A10468F4AB3A6F010000 /* libcore.framework.a in Frameworks */,
 			);
@@ -90,6 +147,8 @@
 			children = (
 				A022A10468F470FF41020000 /* cinema.framework.xcodeproj */,
 				A022A10468F4AB3A6F020000 /* core.framework.xcodeproj */,
+				A022A104688A3C2298020000 /* math.framework.xcodeproj */,
+				A022A104686542540E020000 /* mesh_misc.framework.xcodeproj */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -107,9 +166,9 @@
 			isa = PBXGroup;
 			children = (
 				A022A1046800000000190000 /* configurations */,
+				A022A10468111A998F000000 /* generated */,
 				A022A1046800000000140000 /* libs */,
 				A022A1046800000000230000 /* products */,
-				A022A10468111A998F000000 /* generated */,
 				A022A104680001B8A0000000 /* res */,
 				A022A10468CA90681B000000 /* source */,
 			);
@@ -165,6 +224,15 @@
 			path = ../res/description;
 			sourceTree = SOURCE_ROOT;
 		};
+		A022A104686542540E280000 /* products */ = {
+			isa = PBXGroup;
+			children = (
+				A022A104686542540E000000 /* libmesh_misc.framework.a */,
+				A022A104686542540E000100 /* libmesh_misc.framework_static.a */,
+			);
+			name = products;
+			sourceTree = "<group>";
+		};
 		A022A10468681C2CE8000000 /* hxx */ = {
 			isa = PBXGroup;
 			children = (
@@ -173,6 +241,15 @@
 			name = hxx;
 			path = ../generated/hxx;
 			sourceTree = SOURCE_ROOT;
+		};
+		A022A104688A3C2298280000 /* products */ = {
+			isa = PBXGroup;
+			children = (
+				A022A104688A3C2298000000 /* libmath.framework.a */,
+				A022A104688A3C2298000100 /* libmath.framework_static.a */,
+			);
+			name = products;
+			sourceTree = "<group>";
 		};
 		A022A10468CA90681B000000 /* source */ = {
 			isa = PBXGroup;
@@ -190,6 +267,7 @@
 			isa = PBXGroup;
 			children = (
 				A022A10468F470FF41000000 /* libcinema.framework.a */,
+				A022A10468F470FF41000100 /* libcinema.framework_static.a */,
 			);
 			name = products;
 			sourceTree = "<group>";
@@ -198,6 +276,7 @@
 			isa = PBXGroup;
 			children = (
 				A022A10468F4AB3A6F000000 /* libcore.framework.a */,
+				A022A10468F4AB3A6F000100 /* libcore.framework_static.a */,
 			);
 			name = products;
 			sourceTree = "<group>";
@@ -209,11 +288,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				015A7C7121CA5CAE004D9D65 /* main.h in Headers */,
-				015A7C7021CA5CAE004D9D65 /* helpers.h in Headers */,
-				015A7C6D21CA5CAB004D9D65 /* Oflock.h in Headers */,
-				015A7C6E21CA5CAB004D9D65 /* Oflockrepeller.h in Headers */,
-				015A7C6F21CA5CAB004D9D65 /* Oflocktarget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +308,8 @@
 			dependencies = (
 				A022A10468F470FF41370000 /* PBXTargetDependency */,
 				A022A10468F4AB3A6F370000 /* PBXTargetDependency */,
+				A022A104688A3C2298370000 /* PBXTargetDependency */,
+				A022A104686542540E370000 /* PBXTargetDependency */,
 			);
 			name = flockmodifier;
 			productName = flockmodifier;
@@ -247,7 +323,6 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0999;
-				ORGANIZATIONNAME = "Frank Willeke";
 			};
 			buildConfigurationList = A022A1046800000000410000 /* Build configuration list for PBXProject "flockmodifier" */;
 			compatibilityVersion = "Xcode 8.0";
@@ -268,6 +343,14 @@
 					ProductGroup = A022A10468F4AB3A6F280000 /* products */;
 					ProjectRef = A022A10468F4AB3A6F020000 /* core.framework.xcodeproj */;
 				},
+				{
+					ProductGroup = A022A104688A3C2298280000 /* products */;
+					ProjectRef = A022A104688A3C2298020000 /* math.framework.xcodeproj */;
+				},
+				{
+					ProductGroup = A022A104686542540E280000 /* products */;
+					ProjectRef = A022A104686542540E020000 /* mesh_misc.framework.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -277,6 +360,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		A022A104686542540E000000 /* libmesh_misc.framework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmesh_misc.framework.a;
+			remoteRef = A022A104686542540E040000 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A022A104686542540E000100 /* libmesh_misc.framework_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmesh_misc.framework_static.a;
+			remoteRef = A022A104686542540E040100 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A022A104688A3C2298000000 /* libmath.framework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmath.framework.a;
+			remoteRef = A022A104688A3C2298040000 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A022A104688A3C2298000100 /* libmath.framework_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmath.framework_static.a;
+			remoteRef = A022A104688A3C2298040100 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A022A10468F470FF41000000 /* libcinema.framework.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -284,11 +395,25 @@
 			remoteRef = A022A10468F470FF41040000 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		A022A10468F470FF41000100 /* libcinema.framework_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcinema.framework_static.a;
+			remoteRef = A022A10468F470FF41040100 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A022A10468F4AB3A6F000000 /* libcore.framework.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libcore.framework.a;
 			remoteRef = A022A10468F4AB3A6F040000 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A022A10468F4AB3A6F000100 /* libcore.framework_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcore.framework_static.a;
+			remoteRef = A022A10468F4AB3A6F040100 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -327,6 +452,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A022A104686542540E370000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = mesh_misc.framework;
+			targetProxy = A022A104686542540E050000 /* PBXContainerItemProxy */;
+		};
+		A022A104688A3C2298370000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = math.framework;
+			targetProxy = A022A104688A3C2298050000 /* PBXContainerItemProxy */;
+		};
 		A022A10468F470FF41370000 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = cinema.framework;
@@ -354,7 +489,7 @@
 				);
 				INSTALL_PATH = /..;
 				MAXON_ROOTDIR = ../../../;
-				USER_HEADER_SEARCH_PATHS = "../generated/hxx ../res ../res/description ../source $(MAXON_ROOTDIR)frameworks/core.framework/source/** $(MAXON_ROOTDIR)frameworks/core.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/cinema.framework/source/** $(MAXON_ROOTDIR)frameworks/cinema.framework/generated/hxx $(inherited)";
+				USER_HEADER_SEARCH_PATHS = "../generated/hxx ../res ../res/description ../source $(MAXON_ROOTDIR)frameworks/core.framework/source/** $(MAXON_ROOTDIR)frameworks/core.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/cinema.framework/source/** $(MAXON_ROOTDIR)frameworks/cinema.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/math.framework/source/** $(MAXON_ROOTDIR)frameworks/math.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/mesh_misc.framework/source/** $(MAXON_ROOTDIR)frameworks/mesh_misc.framework/generated/hxx $(inherited)";
 			};
 			name = Debug;
 		};
@@ -372,7 +507,7 @@
 				);
 				INSTALL_PATH = /..;
 				MAXON_ROOTDIR = ../../../;
-				USER_HEADER_SEARCH_PATHS = "../generated/hxx ../res ../res/description ../source $(MAXON_ROOTDIR)frameworks/core.framework/source/** $(MAXON_ROOTDIR)frameworks/core.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/cinema.framework/source/** $(MAXON_ROOTDIR)frameworks/cinema.framework/generated/hxx $(inherited)";
+				USER_HEADER_SEARCH_PATHS = "../generated/hxx ../res ../res/description ../source $(MAXON_ROOTDIR)frameworks/core.framework/source/** $(MAXON_ROOTDIR)frameworks/core.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/cinema.framework/source/** $(MAXON_ROOTDIR)frameworks/cinema.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/math.framework/source/** $(MAXON_ROOTDIR)frameworks/math.framework/generated/hxx $(MAXON_ROOTDIR)frameworks/mesh_misc.framework/source/** $(MAXON_ROOTDIR)frameworks/mesh_misc.framework/generated/hxx $(inherited)";
 			};
 			name = Release;
 		};
