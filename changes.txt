@@ -1,3 +1,6 @@
+0.7.6
+- Ported to Cinema 4D R20 API
+
 0.7.5
 - Fixed bug: "Dead" boids that don't move
 - Lots of internal optimizations

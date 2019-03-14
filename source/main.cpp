@@ -2,13 +2,13 @@
 #include "main.h"
 
 
-#define PLUGIN_VERSION  String("FlockModifier 0.7.5")
+#define PLUGIN_VERSION  String("FlockModifier 0.7.6")
 
 
 Bool PluginStart()
 {
 	GePrint(PLUGIN_VERSION);
-	
+
 	if (!RegisterFlockModifier())
 		return false;
 	if (!RegisterFlockTarget())
@@ -28,7 +28,7 @@ Bool PluginMessage(Int32 id, void *data)
 	switch (id)
 	{
 		case C4DPL_INIT_SYS:
-			return resource.Init(); // don't start plugin without resource
+			return g_resource.Init(); // don't start plugin without resource
 
 		case C4DMSG_PRIORITY:
 			return true;

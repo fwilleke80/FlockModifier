@@ -28,7 +28,7 @@ Bool FlockTarget::Init(GeListNode *node)
 {
 	if (!node)
 		return false;
-	
+
 	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
 	if (!bc)
 		return false;
@@ -48,7 +48,7 @@ Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData 
 {
 	if (!node)
 		return false;
-	
+
 	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
 	if (!bc)
 		return false;
@@ -73,15 +73,15 @@ Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData 
 //
 DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
 {
-	if (drawpass != DRAWPASS_OBJECT)
-		return DRAWRESULT_SKIP;
-	
+	if (drawpass != DRAWPASS::OBJECT)
+		return DRAWRESULT::SKIP;
+
 	if (!op || !bd || !bh)
-		return DRAWRESULT_ERROR;
+		return DRAWRESULT::FAILURE;
 
 	BaseContainer* bc = op->GetDataInstance();
 	if (!bc)
-		return DRAWRESULT_ERROR;
+		return DRAWRESULT::FAILURE;
 
 	bd->SetPen(COLOR_FLOCKTARGET * bc->GetFloat(OFLOCKTARGET_WEIGHT));
 
@@ -90,10 +90,10 @@ DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, Ba
 		Draw3DCross(bd, 50.0);
 	else
 		DrawSphere(bd, bc->GetFloat(OFLOCKTARGET_RADIUS, 50.0));
-	
+
 	bd->SetMatrix_Matrix(nullptr, Matrix());
 
-	return DRAWRESULT_OK;
+	return DRAWRESULT::OK;
 }
 
 
@@ -102,5 +102,5 @@ DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, Ba
 //
 Bool RegisterFlockTarget()
 {
-	return RegisterObjectPlugin(ID_OFLOCKTARGET, GeLoadString(IDS_OFLOCKTARGET), 0, FlockTarget::Alloc, "Oflocktarget", AutoBitmap("Oflocktarget.tif"), 0);
+	return RegisterObjectPlugin(ID_OFLOCKTARGET, GeLoadString(IDS_OFLOCKTARGET), 0, FlockTarget::Alloc, "Oflocktarget"_s, AutoBitmap("Oflocktarget.tif"_s), 0);
 }
