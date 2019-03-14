@@ -12,17 +12,17 @@
 class FlockModifier : public ObjectData
 {
 	INSTANCEOF(FlockModifier, ObjectData)
-	
+
 public:
 	virtual Bool Init(GeListNode *node);
 	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
 	virtual void ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *ss, Int32 pcnt, Float diff);
-	
+
 	static NodeData *Alloc()
 	{
 		return NewObjClear(FlockModifier);
 	}
-	
+
 private:
 	AutoFree<GeRayCollider> _geoAvoidanceCollider; ///< GeRayCollider for "Avoid Geometry" rule
 };
@@ -70,20 +70,20 @@ Bool FlockModifier::GetDEnabling(GeListNode *node, const DescID &id,const GeData
 {
 	if (!node)
 		return false;
-	
+
 	BaseContainer *bc = static_cast<BaseObject*>(node)->GetDataInstance();
 	if (!bc)
 		return false;
-	
+
 	switch (id[0].id)
 	{
 		case OFLOCK_AVOIDGEO_WEIGHT:
 			return bc->GetInt32(OFLOCK_AVOIDGEO_MODE) == OFLOCK_AVOIDGEO_MODE_SOFT;
-			
+
 		case OFLOCK_SPEED_WEIGHT:
 			return bc->GetInt32(OFLOCK_SPEED_MODE) == OFLOCK_SPEED_MODE_SOFT;
 	}
-	
+
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
@@ -99,7 +99,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 	BaseContainer *bc = op->GetDataInstance();
 	BaseDocument *doc = op->GetDocument();
-	
+
 	if (!bc || !doc)
 		return;
 
@@ -174,7 +174,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	maxon::BaseArray<RepellerData> repellerData;
 
 
-	/* ------------------- Set rule mask & prepare some data --------------------------- */ 
+	/* ------------------- Set rule mask & prepare some data --------------------------- */
 	RULEFLAGS rulemask = RULEFLAGS_NONE;
 
 	// Center Flock
@@ -255,7 +255,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	if (((iAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && fAvoidGeoWeight > 0.0) || iAvoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && fAvoidGeoDist > 0.0 && boAvoidGeoLink && boAvoidGeoLink->GetType() == Opolygon && ToPoly(boAvoidGeoLink)->GetPolygonCount() > 0)
 	{
 		rulemask |= RULEFLAGS_AVOIDGEO;
-		
+
 		// Lazy-alloc collider
 		if (!_geoAvoidanceCollider)
 		{
@@ -263,7 +263,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			if (!_geoAvoidanceCollider)
 				return;
 		}
-		
+
 		_geoAvoidanceCollider->Init(boAvoidGeoLink);
 		mAvoidGeo = boAvoidGeoLink->GetMg();
 		mAvoidGeoI = ~mAvoidGeo;
@@ -309,7 +309,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		// do all the pointer arithmetics for pp[i].
 		Particle &currentParticle = pp[i];
 		BaseParticle &currentBaseParticle = ss[i];
-		
+
 		// Skip unwanted particles
 		if (!(currentParticle.bits&PARTICLEFLAGS::VISIBLE))
 			continue;
@@ -318,7 +318,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		vParticleDir = vCenterflockDir = vNeighborDir = vMatchVelocityDir = Vector();
 		iCount = 0;
 
-		/* ------------------- Collect particle interaction data --------------------------- */ 
+		/* ------------------- Collect particle interaction data --------------------------- */
 
 		// Iterate other particles
 		for (j = 0; j < pcnt; ++j)
@@ -341,7 +341,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			// Skip if particles too far away from each other
 			if (fNeighborDist > fNeighborSightRadius)
 				continue;
-			
+
 			// Flock Center
 			// ------------
 			if (rulemask&RULEFLAGS_CENTER)
@@ -373,7 +373,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		if (iCount > 1)
 		{
 			/* ------------------- Soft Rules --------------------------- */
-			
+
 			Float fCountI = 1.0 / FMax(iCount, EPSILON);
 
 			// Flock Center
@@ -416,14 +416,14 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				}
 			}
 		}
-		
+
 		// Turbulence
 		// ----------
 		if (rulemask&RULEFLAGS_TURBULENCE)
 		{
 			vParticleDir += Vector(SNoise(fTurbulenceScale * currentParticle.off, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd1, fTurbulenceTime), SNoise(fTurbulenceScale * currentParticle.off + vTurbulenceAdd2, fTurbulenceTime)) * fTurbulenceWeight;
 		}
-		
+
 		// Repell
 		// ------
 		if (rulemask&RULEFLAGS_REPELL)
@@ -436,18 +436,18 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 					vParticleDir -= dist * (1.0 - distLength * repeller->_radiusI) * repeller->_weight * fRepellGlobalWeight;
 			}
 		}
-		
+
 		// Add resulting direction to current velocity
 		vParticleDir += currentParticle.v3;
-		
-		
+
+
 		// Level Flight
 		// ------------
 		if (rulemask&RULEFLAGS_LEVELFLIGHT)
 		{
 			vParticleDir.y -= vParticleDir.y * fLevelFlightWeight;
 		}
-		
+
 		// Avoid Geometry
 		// --------------
 		if (rulemask&RULEFLAGS_AVOIDGEO)
@@ -455,7 +455,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI * (!vParticleDir), fAvoidGeoDist))
 			{
 				GeRayColResult colliderResult;
-				
+
 				if (_geoAvoidanceCollider->GetNearestIntersection(&colliderResult))
 				{
 					fAvoidGeoMixval = 1.0 - colliderResult.distance * fAvoidGeoDistI;
@@ -464,7 +464,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 						case OFLOCK_AVOIDGEO_MODE_SOFT:
 							vParticleDir = vParticleDir + mAvoidGeo * (!colliderResult.s_normal) * vParticleDir.GetLength() * fAvoidGeoMixval * fAvoidGeoWeight;
 							break;
-							
+
 						default:
 						case OFLOCK_AVOIDGEO_MODE_HARD:
 							vParticleDir = Blend(mAvoidGeo * ((!colliderResult.s_normal * vParticleDir.GetLength())), vParticleDir, fAvoidGeoMixval);
@@ -473,8 +473,8 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				}
 			}
 		}
-		
-		
+
+
 		// Speed Limits
 		// ------------
 		if (rulemask&RULEFLAGS_SPEEDLIMIT)
@@ -496,7 +496,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 					}
 					break;
 				}
-					
+
 				case OFLOCK_SPEED_MODE_HARD:
 				{
 					if (fSpeed < fSpeedMin)
@@ -511,7 +511,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 				}
 			}
 		}
-		
+
 		// Add resulting velocity, apply overall weight
 		currentBaseParticle.v += Blend(currentParticle.v3, vParticleDir, fWeight);
 

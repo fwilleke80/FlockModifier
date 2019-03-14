@@ -1,5 +1,5 @@
-#ifndef FLOCKHELPERS_H__
-#define FLOCKHELPERS_H__
+#ifndef HELPERS_H__
+#define HELPERS_H__
 
 #include "c4d.h"
 
@@ -42,7 +42,7 @@ struct TargetData
 		_infinite(false),
 		_position(0.0)
 	{ }
-	
+
 	TargetData(Float weight, Float radius, Bool infinite, const Vector &position) :
 		_weight(weight),
 		_radius(radius),
@@ -65,7 +65,7 @@ struct RepellerData
 		_radius(0.0),
 		_position(0.0)
 	{ }
-	
+
 	RepellerData(Float weight, Float radius, const Vector &position) :
 		_weight(weight),
 		_radius(radius),
@@ -104,4 +104,4 @@ inline void Draw3DCross(BaseDraw *bd, Float length)
 	bd->DrawLine(Vector(0.0, 0.0, length), Vector(0.0, 0.0, -length), 0);
 }
 
-#endif // FLOCKHELPERS_H__
+#endif // HELPERS_H__

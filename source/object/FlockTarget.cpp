@@ -28,7 +28,7 @@ Bool FlockTarget::Init(GeListNode *node)
 {
 	if (!node)
 		return false;
-	
+
 	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
 	if (!bc)
 		return false;
@@ -48,7 +48,7 @@ Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData 
 {
 	if (!node)
 		return false;
-	
+
 	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
 	if (!bc)
 		return false;
@@ -75,7 +75,7 @@ DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, Ba
 {
 	if (drawpass != DRAWPASS::OBJECT)
 		return DRAWRESULT::SKIP;
-	
+
 	if (!op || !bd || !bh)
 		return DRAWRESULT::FAILURE;
 
@@ -90,7 +90,7 @@ DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, Ba
 		Draw3DCross(bd, 50.0);
 	else
 		DrawSphere(bd, bc->GetFloat(OFLOCKTARGET_RADIUS, 50.0));
-	
+
 	bd->SetMatrix_Matrix(nullptr, Matrix());
 
 	return DRAWRESULT::OK;

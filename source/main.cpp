@@ -8,7 +8,7 @@
 Bool PluginStart()
 {
 	GePrint(PLUGIN_VERSION);
-	
+
 	if (!RegisterFlockModifier())
 		return false;
 	if (!RegisterFlockTarget())
