@@ -105,7 +105,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 
 	// Variables
 	Int32 iCount = pcnt - 1;
-	Vector vParticleDir(DC);
+	Vector vParticleDir(maxon::DONT_INITIALIZE);
 
 	// Overall weight
 	Float fWeight = bc->GetFloat(OFLOCK_WEIGHT, 1.0);
@@ -116,17 +116,17 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	fNeighborSightRadius *= fNeighborSightRadius;		// Square
 
 	// Flock Center
-	Vector vCenterflockDir(DC);
+	Vector vCenterflockDir(maxon::DONT_INITIALIZE);
 	Float fCenterflockWeight = bc->GetFloat(OFLOCK_CENTER_WEIGHT, 0.0) * 0.1;
 
 	// Neighbor Distance
-	Vector vNeighborDiff(DC);
-	Vector vNeighborDir(DC);
+	Vector vNeighborDiff(maxon::DONT_INITIALIZE);
+	Vector vNeighborDir(maxon::DONT_INITIALIZE);
 	Float fNeighborWeight = bc->GetFloat(OFLOCK_NEIGHBORDIST_WEIGHT, 0.0) * 0.1;
 	Float fNeighborMinDist = bc->GetFloat(OFLOCK_NEIGHBORDIST_DIST, 0.0);
 
 	// Match Velocity
-	Vector vMatchVelocityDir(DC);
+	Vector vMatchVelocityDir(maxon::DONT_INITIALIZE);
 	Float fMatchVelocityWeight = bc->GetFloat(OFLOCK_MATCHVEL_WEIGHT, 0.0) * 0.1;
 
 	// Target
@@ -152,7 +152,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	Int32 iAvoidGeoMode = bc->GetInt32(OFLOCK_AVOIDGEO_MODE, 1);
 	Float fAvoidGeoWeight = bc->GetFloat(OFLOCK_AVOIDGEO_WEIGHT, 0.0);
 	Float fAvoidGeoDist = bc->GetFloat(OFLOCK_AVOIDGEO_DIST, 0.0);
-	Float fAvoidGeoDistI = 1.0 / FMax(fAvoidGeoDist, EPSILON);
+	Float fAvoidGeoDistI = maxon::Inverse(fAvoidGeoDist);
 	BaseObject* boAvoidGeoLink = bc->GetObjectLink(OFLOCK_AVOIDGEO_LINK, doc);
 	Matrix mAvoidGeo(maxon::DONT_INITIALIZE);
 	Matrix mAvoidGeoI(maxon::DONT_INITIALIZE);
@@ -161,9 +161,9 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 	// Turbulence
 	Float fTurbulenceWeight = bc->GetFloat(OFLOCK_TURBULENCE_WEIGHT, 0.0) * 10.0;
 	Float fTurbulenceTime = doc->GetTime().Get() * bc->GetFloat(OFLOCK_TURBULENCE_FREQUENCY, 1.0);
-	Float fTurbulenceScale = 0.1 / ClampValue(bc->GetFloat(OFLOCK_TURBULENCE_SCALE, 1.0), 0.0001, MAXRANGE_FLOAT);
-	Vector vTurbulenceAdd1(DC);
-	Vector vTurbulenceAdd2(DC);
+	Float fTurbulenceScale = 0.1 / ClampValue(bc->GetFloat(OFLOCK_TURBULENCE_SCALE, 1.0), 0.0001, LIMIT<Float>::Max());
+	Vector vTurbulenceAdd1(maxon::DONT_INITIALIZE);
+	Vector vTurbulenceAdd2(maxon::DONT_INITIALIZE);
 
 	// Repell
 	Float fRepellGlobalWeight = bc->GetFloat(OFLOCK_REPELL_WEIGHT, 0.0);
@@ -240,7 +240,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 					                 tc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, true),
 					                 opListItem->GetMg().off);
 					tdata._radius *= tdata._radius; // Square radius
-					tdata._radiusI = 1.0 / FMax(tdata._radius, EPSILON); // Calculate inverse radius
+					tdata._radiusI = maxon::Inverse(tdata._radius); // Calculate inverse radius
 					iferr (targetData.Append(tdata))
 					{
 						DiagnosticOutput("Could not append target to targetData array!");
@@ -290,7 +290,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 					                   tc->GetFloat(OFLOCKREPELLER_RADIUS, 0.0),
 					                   opListItem->GetMg().off);
 					rdata._radius *= rdata._radius; // Square radius
-					rdata._radiusI = 1.0 / FMax(rdata._radius, EPSILON); // Calculate inverse radius
+					rdata._radiusI = maxon::Inverse(rdata._radius); // Calculate inverse radius
 					iferr (repellerData.Append(rdata))
 					{
 						DiagnosticOutput("Could not append repeller to repellerData array!");
@@ -374,7 +374,7 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		{
 			/* ------------------- Soft Rules --------------------------- */
 
-			Float fCountI = 1.0 / FMax(iCount, EPSILON);
+			Float fCountI = maxon::Inverse((Float)iCount);
 
 			// Flock Center
 			// ------------
@@ -452,22 +452,30 @@ void FlockModifier::ModifyParticles(BaseObject *op, Particle *pp, BaseParticle *
 		// --------------
 		if (rulemask&RULEFLAGS_AVOIDGEO)
 		{
-			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI * (!vParticleDir), fAvoidGeoDist))
+			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI * !vParticleDir, fAvoidGeoDist))
 			{
 				GeRayColResult colliderResult;
 
 				if (_geoAvoidanceCollider->GetNearestIntersection(&colliderResult))
 				{
+					// Mixval: Range of [AvoidGeoDistance -> 0.0] mapped to [0.0 -> 1.0]
 					fAvoidGeoMixval = 1.0 - colliderResult.distance * fAvoidGeoDistI;
+
+					// Direction pointing away from surface
+					// Just the normalized shading normal in global space
+					Vector awayFromSurface(mAvoidGeo.sqmat * !colliderResult.s_normal);
+
 					switch (iAvoidGeoMode)
 					{
 						case OFLOCK_AVOIDGEO_MODE_SOFT:
-							vParticleDir = vParticleDir + mAvoidGeo * (!colliderResult.s_normal) * vParticleDir.GetLength() * fAvoidGeoMixval * fAvoidGeoWeight;
+							// Add the new direction to particle velocity, weighted by mixval and user weight value
+							vParticleDir = vParticleDir + awayFromSurface * vParticleDir.GetLength() * fAvoidGeoMixval * fAvoidGeoWeight;
 							break;
-
+							
 						default:
 						case OFLOCK_AVOIDGEO_MODE_HARD:
-							vParticleDir = Blend(mAvoidGeo * ((!colliderResult.s_normal * vParticleDir.GetLength())), vParticleDir, fAvoidGeoMixval);
+							// Blend between current velocity and new direction, weighted by mixval
+							vParticleDir = Blend(awayFromSurface * vParticleDir.GetLength(), vParticleDir, fAvoidGeoMixval);
 							break;
 					}
 				}
