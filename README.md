@@ -18,4 +18,3 @@ This plugin demonstrates the following C4D API aspects:
 * Ray intersections with `class GeRayCollider`
 * Simple viewport drawing
 * Aligning matrices to trajectories and directions
-* Implementing realistic swarming behavior in less than 400 lines of functional code
