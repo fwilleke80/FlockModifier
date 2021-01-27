@@ -1,4 +1,4 @@
-# OSX files
+# macOS files
 *.xcworkspacedata
 *.xcuserstate
 *.xcsettings
@@ -7,6 +7,8 @@
 *.plist
 *.dylib
 *.xlib
+.DS_Store
+
 
 # Windows files
 *.exp
@@ -18,8 +20,9 @@
 *.obj
 *.xdl64
 
-# Misc files
+# Misc files and folders
 *.msg
 *.stamp
 *.hxx
 *.ph
+generated
