@@ -52,23 +52,33 @@ Bool FlockModifier::Init(GeListNode* node)
 	BaseContainer& dataRef = static_cast<BaseObject*>(node)->GetDataInstanceRef();
 
 	dataRef.SetFloat(OFLOCK_WEIGHT, 1.0);
+
+	dataRef.SetFloat(OFLOCK_SIGHT, 50.0);
+
 	dataRef.SetFloat(OFLOCK_CENTER_WEIGHT, 0.2);
+
 	dataRef.SetFloat(OFLOCK_NEIGHBORDIST_WEIGHT, 0.1);
 	dataRef.SetFloat(OFLOCK_NEIGHBORDIST_DIST, 10.0);
-	dataRef.GetFloat(OFLOCK_MATCHVEL_WEIGHT, 0.1);
-	dataRef.GetFloat(OFLOCK_TARGET_WEIGHT, 0.15);
-	dataRef.GetFloat(OFLOCK_LEVELFLIGHT_WEIGHT, 0.3);
-	dataRef.GetFloat(OFLOCK_SPEED_WEIGHT, 0.2);
-	dataRef.SetInt32(OFLOCK_SPEED_MODE, OFLOCK_SPEED_MODE_SOFT);
-	dataRef.SetFloat(OFLOCK_SPEED_MIN, 0.0);
-	dataRef.SetFloat(OFLOCK_SPEED_MAX, 200.0);
-	dataRef.SetFloat(OFLOCK_SIGHT, 50.0);
-	dataRef.SetFloat(OFLOCK_AVOIDGEO_WEIGHT, 1.0);
-	dataRef.SetFloat(OFLOCK_AVOIDGEO_DIST, 50.0);
-	dataRef.SetFloat(OFLOCK_AVOIDGEO_MODE, OFLOCK_AVOIDGEO_MODE_SOFT);
+
+	dataRef.SetFloat(OFLOCK_MATCHVEL_WEIGHT, 0.1);
+
+	dataRef.SetFloat(OFLOCK_LEVELFLIGHT_WEIGHT, 0.3);
+
 	dataRef.SetFloat(OFLOCK_TURBULENCE_WEIGHT, 0.5);
 	dataRef.SetFloat(OFLOCK_TURBULENCE_FREQUENCY, 2.0);
 	dataRef.SetFloat(OFLOCK_TURBULENCE_SCALE, 2.0);
+
+	dataRef.SetFloat(OFLOCK_SPEED_WEIGHT, 0.2);
+	dataRef.SetInt32(OFLOCK_SPEED_MODE, OFLOCK_SPEED_MODE_SOFT);
+	dataRef.SetFloat(OFLOCK_SPEED_MIN, 0.0);
+	dataRef.SetFloat(OFLOCK_SPEED_MAX, 200.0);
+
+	dataRef.SetFloat(OFLOCK_TARGET_WEIGHT, 0.2);
+
+	dataRef.SetFloat(OFLOCK_AVOIDGEO_WEIGHT, 1.0);
+	dataRef.SetFloat(OFLOCK_AVOIDGEO_DIST, 50.0);
+	dataRef.SetFloat(OFLOCK_AVOIDGEO_MODE, OFLOCK_AVOIDGEO_MODE_SOFT);
+
 	dataRef.SetFloat(OFLOCK_REPELL_WEIGHT, 1.0);
 
 	return SUPER::Init(node);
