@@ -46,17 +46,17 @@ namespace Flock
 		Vector position; ///< Global position of target
 
 		TargetData() :
-		weight(0.0),
-		radius(0.0),
-		infinite(false),
-		position(0.0)
+			weight(0.0),
+			radius(0.0),
+			infinite(false),
+			position(0.0)
 		{}
 
 		TargetData(Float t_weight, Float t_radius, Bool t_infinite, const Vector& t_position) :
-		weight(t_weight),
-		radius(t_radius),
-		infinite(t_infinite),
-		position(t_position)
+			weight(t_weight),
+			radius(t_radius),
+			infinite(t_infinite),
+			position(t_position)
 		{}
 	};
 
@@ -71,15 +71,15 @@ namespace Flock
 		Vector position;  ///< Global position of repeller
 
 		RepellerData() :
-		weight(0.0),
-		radius(0.0),
-		position(0.0)
+			weight(0.0),
+			radius(0.0),
+			position(0.0)
 		{}
 
 		RepellerData(Float t_weight, Float t_radius, const Vector& t_position) :
-		weight(t_weight),
-		radius(t_radius),
-		position(t_position)
+			weight(t_weight),
+			radius(t_radius),
+			position(t_position)
 		{}
 	};
 
