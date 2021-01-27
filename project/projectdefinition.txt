@@ -5,14 +5,12 @@ Platform=Win64;OSX
 Type=DLL
 
 // API dependencies
-APIS=cinema.framework;math.framework;core.framework;
+APIS=cinema.framework;core.framework
 
 // C4D component
 C4D=true
 
 stylecheck.level=3 // must be set after c4d=true
-stylecheck.enum-registration=false
-stylecheck.enum-class=false
 
 // Custom ID
-ModuleId=de.frankwilleke.c4dplugins.flockmodifier
+ModuleId=de.frankwilleke.flockmodifier
