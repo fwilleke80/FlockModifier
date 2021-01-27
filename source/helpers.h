@@ -86,6 +86,9 @@ namespace Flock
 	///
 	/// \brief Draws a sphere into the viewport
 	///
+	/// \param[in] bd The BaseDraw to draw in
+	/// \param[in] radius The radius of the sphere
+	///
 	MAXON_ATTRIBUTE_FORCE_INLINE void DrawSphere(BaseDraw* bd, Float radius)
 	{
 		if (!bd)
@@ -109,6 +112,9 @@ namespace Flock
 
 	///
 	/// \brief Draws a 3D cross into the viewport
+	///
+	/// \param[in] bd The BaseDraw to draw in
+	/// \param[in] length The length of the cross lines
 	///
 	MAXON_ATTRIBUTE_FORCE_INLINE void Draw3dCross(BaseDraw* bd, Float length)
 	{

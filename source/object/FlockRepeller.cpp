@@ -13,6 +13,9 @@
 #include "oflockrepeller.h"
 
 
+///
+/// \brief This class implements a imple object with some viewport drawing. The FlockModifier will recognize it as a repeller.
+///
 class FlockRepeller : public ObjectData
 {
 	INSTANCEOF(FlockRepeller, ObjectData)
@@ -80,9 +83,6 @@ DRAWRESULT FlockRepeller::Draw(BaseObject* op, DRAWPASS drawpass, BaseDraw* bd, 
 }
 
 
-//
-// Register Plugin Object
-//
 Bool RegisterFlockRepeller()
 {
 	return RegisterObjectPlugin(Flock::ID_OFLOCKREPELLER, GeLoadString(IDS_OFLOCKREPELLER), 0, FlockRepeller::Alloc, "oflockrepeller"_s, AutoBitmap("oflockrepeller.tif"_s), 0);

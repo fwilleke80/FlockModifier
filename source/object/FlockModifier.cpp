@@ -19,6 +19,9 @@
 #include "c4d_symbols.h"
 
 
+///
+/// \brief This class implements the actual particle modifier
+///
 class FlockModifier : public ObjectData
 {
 	INSTANCEOF(FlockModifier, ObjectData)
@@ -71,9 +74,6 @@ Bool FlockModifier::Init(GeListNode* node)
 	return SUPER::Init(node);
 }
 
-//
-// Enable/Disable attributes
-//
 Bool FlockModifier::GetDEnabling(GeListNode* node, const DescID& id, const GeData& t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc)
 {
 	if (!node)
@@ -93,9 +93,6 @@ Bool FlockModifier::GetDEnabling(GeListNode* node, const DescID& id, const GeDat
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
-//
-// Simulate flock
-//
 void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* ss, Int32 pcnt, Float diff)
 {
 	if (!op || !pp || !ss)
@@ -527,9 +524,6 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 }
 
 
-//
-// Register Plugin Object
-//
 Bool RegisterFlockModifier()
 {
 	return RegisterObjectPlugin(Flock::ID_OFLOCKMODIFIER, GeLoadString(IDS_OFLOCK), OBJECT_PARTICLEMODIFIER, FlockModifier::Alloc, "Oflock"_s, AutoBitmap("Oflock.tif"_s), 0);

@@ -13,6 +13,9 @@
 #include "oflocktarget.h"
 
 
+///
+/// \brief This class implements a imple object with some viewport drawing. The FlockModifier will recognize it as an attractor.
+///
 class FlockTarget : public ObjectData
 {
 	INSTANCEOF(FlockTarget, ObjectData)
