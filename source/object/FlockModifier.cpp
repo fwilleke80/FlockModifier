@@ -490,7 +490,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 
 		// Add resulting velocity, apply overall weight
 		currentBaseParticle.v += Blend(currentParticle.v3, particleDirection, modifierWeight);
-		currentBaseParticle.count++;
+		++currentBaseParticle.count;
 	}
 }
 
