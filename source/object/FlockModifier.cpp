@@ -173,8 +173,8 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	Float fTurbulenceWeight = dataRef.GetFloat(OFLOCK_TURBULENCE_WEIGHT, 0.0) * 10.0;
 	Float fTurbulenceTime = doc->GetTime().Get() * dataRef.GetFloat(OFLOCK_TURBULENCE_FREQUENCY, 1.0);
 	Float fTurbulenceScale = 0.1 / ClampValue(dataRef.GetFloat(OFLOCK_TURBULENCE_SCALE, 1.0), EPSILON, MAXVALUE_FLOAT);
-	Vector vTurbulenceAdd1(maxon::DONT_INITIALIZE);
-	Vector vTurbulenceAdd2(maxon::DONT_INITIALIZE);
+	static const Vector vTurbulenceAdd1(PI * 1000.0);
+	static const Vector vTurbulenceAdd2(-PI05 * 1000.0);
 
 	// Repell
 	Float fRepellGlobalWeight = dataRef.GetFloat(OFLOCK_REPELL_WEIGHT, 0.0);
@@ -217,8 +217,6 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	if (fTurbulenceWeight > 0.0)
 	{
 		rulemask |= Flock::RULEFLAGS::TURBULENCE;
-		vTurbulenceAdd1 = Vector(PI * 1000.0);
-		vTurbulenceAdd2 = Vector(-PI05 * 1000.0);
 	}
 
 	// Speed Limit

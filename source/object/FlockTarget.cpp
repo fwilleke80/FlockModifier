@@ -21,9 +21,9 @@ class FlockTarget : public ObjectData
 	INSTANCEOF(FlockTarget, ObjectData)
 
 public:
-	virtual Bool Init(GeListNode* node);
-	virtual Bool GetDEnabling(GeListNode* node, const DescID& id, const GeData& t_data, DESCFLAGS_ENABLE flags, const BaseContainer* itemdesc);
-	virtual DRAWRESULT Draw(BaseObject* op, DRAWPASS drawpass, BaseDraw* bd, BaseDrawHelp* bh);
+	virtual Bool Init(GeListNode* node) override;
+	virtual Bool GetDEnabling(GeListNode* node, const DescID& id, const GeData& t_data, DESCFLAGS_ENABLE flags, const BaseContainer* itemdesc) override;
+	virtual DRAWRESULT Draw(BaseObject* op, DRAWPASS drawpass, BaseDraw* bd, BaseDrawHelp* bh) override;
 
 	static NodeData *Alloc()
 	{
