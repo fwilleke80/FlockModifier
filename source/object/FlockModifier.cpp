@@ -54,16 +54,11 @@ Bool FlockModifier::Init(GeListNode* node)
 	dataRef.SetFloat(OFLOCK_WEIGHT, 1.0);
 
 	dataRef.SetFloat(OFLOCK_SIGHT, 50.0);
-
 	dataRef.SetFloat(OFLOCK_CENTER_WEIGHT, 0.2);
-
 	dataRef.SetFloat(OFLOCK_NEIGHBORDIST_WEIGHT, 0.1);
 	dataRef.SetFloat(OFLOCK_NEIGHBORDIST_DIST, 10.0);
-
 	dataRef.SetFloat(OFLOCK_MATCHVEL_WEIGHT, 0.1);
-
 	dataRef.SetFloat(OFLOCK_LEVELFLIGHT_WEIGHT, 0.3);
-
 	dataRef.SetFloat(OFLOCK_TURBULENCE_WEIGHT, 0.5);
 	dataRef.SetFloat(OFLOCK_TURBULENCE_FREQUENCY, 2.0);
 	dataRef.SetFloat(OFLOCK_TURBULENCE_SCALE, 2.0);
@@ -72,13 +67,10 @@ Bool FlockModifier::Init(GeListNode* node)
 	dataRef.SetInt32(OFLOCK_SPEED_MODE, OFLOCK_SPEED_MODE_SOFT);
 	dataRef.SetFloat(OFLOCK_SPEED_MIN, 0.0);
 	dataRef.SetFloat(OFLOCK_SPEED_MAX, 200.0);
-
 	dataRef.SetFloat(OFLOCK_TARGET_WEIGHT, 0.2);
-
 	dataRef.SetFloat(OFLOCK_AVOIDGEO_WEIGHT, 1.0);
 	dataRef.SetFloat(OFLOCK_AVOIDGEO_DIST, 50.0);
 	dataRef.SetFloat(OFLOCK_AVOIDGEO_MODE, OFLOCK_AVOIDGEO_MODE_SOFT);
-
 	dataRef.SetFloat(OFLOCK_REPELL_WEIGHT, 1.0);
 
 	return SUPER::Init(node);
@@ -184,8 +176,8 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		iRepellerCount = inexRepell->GetObjectCount();
 	maxon::BaseArray<Flock::RepellerData> repellerData;
 
-
 	/* ------------------- Set rule mask & prepare some data --------------------------- */
+
 	Flock::RULEFLAGS rulemask = Flock::RULEFLAGS::NONE;
 
 	// Center Flock
@@ -220,7 +212,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	}
 
 	// Speed Limit
-	if (((iSpeedMode == OFLOCK_SPEED_MODE_SOFT && fSpeedWeight > 0.0) || iSpeedMode == OFLOCK_SPEED_MODE_HARD))
+	if ((iSpeedMode == OFLOCK_SPEED_MODE_SOFT && fSpeedWeight > 0.0) || iSpeedMode == OFLOCK_SPEED_MODE_HARD)
 	{
 		rulemask |= Flock::RULEFLAGS::SPEEDLIMIT;
 		fSpeedMin *= fSpeedMin; // Square
@@ -232,22 +224,18 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	{
 		rulemask |= Flock::RULEFLAGS::TARGET;
 
-		BaseObject *opListItem = nullptr;
-		BaseContainer *tc = nullptr;
-
 		targetData.Flush();
 		for (Int32 i = 0; i < iTargetCount; ++i)
 		{
-			opListItem = static_cast<BaseObject*>(inexTarget->ObjectFromIndex(doc, i));
+			BaseObject* opListItem = static_cast<BaseObject*>(inexTarget->ObjectFromIndex(doc, i));
 			if (opListItem)
 			{
-				tc = opListItem->GetDataInstance();
-				if (tc && tc->GetBool(OFLOCKTARGET_ENABLED))
+				const BaseContainer& targetDataRef = opListItem->GetDataInstanceRef();
+				if (targetDataRef.GetBool(OFLOCKTARGET_ENABLED))
 				{
-					Flock::TargetData tdata(tc->GetFloat(OFLOCKREPELLER_WEIGHT, 1.0), tc->GetFloat(OFLOCKTARGET_RADIUS, 0.0), tc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, true), opListItem->GetMg().off);
-					tdata.radius *= tdata.radius; // Square radius
-					tdata.radiusI = maxon::Inverse(tdata.radius); // Calculate inverse radius
-					iferr (targetData.Append(tdata))
+					Flock::TargetData targetDataItem(targetDataRef.GetFloat(OFLOCKREPELLER_WEIGHT, 1.0), Sqr(targetDataRef.GetFloat(OFLOCKTARGET_RADIUS)), targetDataRef.GetBool(OFLOCKTARGET_RADIUS_INFINITE, true), opListItem->GetMg().off);
+					targetDataItem.radiusI = maxon::Inverse(targetDataItem.radius); // Calculate inverse radius
+					iferr (targetData.Append(targetDataItem))
 					{
 						GePrint(err.GetMessage());
 						return;
@@ -270,7 +258,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				return;
 		}
 
-		_geoAvoidanceCollider->Init(boAvoidGeoLink);
+		_geoAvoidanceCollider->Init(boAvoidGeoLink, false);
 		mAvoidGeo = boAvoidGeoLink->GetMg();
 		mAvoidGeoI = ~mAvoidGeo;
 	}
@@ -280,22 +268,18 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	{
 		rulemask |= Flock::RULEFLAGS::REPELL;
 
-		BaseObject *opListItem = nullptr;
-		BaseContainer *tc = nullptr;
-
 		repellerData.Flush();
 		for (Int32 i = 0; i < iRepellerCount; ++i)
 		{
-			opListItem = static_cast<BaseObject*>(inexRepell->ObjectFromIndex(doc, i));
+			BaseObject* opListItem = static_cast<BaseObject*>(inexRepell->ObjectFromIndex(doc, i));
 			if (opListItem)
 			{
-				tc = opListItem->GetDataInstance();
-				if (tc && tc->GetBool(OFLOCKREPELLER_ENABLED))
+				const BaseContainer& repellerDataRef = opListItem->GetDataInstanceRef();
+				if (repellerDataRef.GetBool(OFLOCKREPELLER_ENABLED))
 				{
-					Flock::RepellerData rdata(tc->GetFloat(OFLOCKREPELLER_WEIGHT, 1.0), tc->GetFloat(OFLOCKREPELLER_RADIUS, 0.0), opListItem->GetMg().off);
-					rdata.radius *= rdata.radius; // Square radius
-					rdata.radiusI = maxon::Inverse(rdata.radius); // Calculate inverse radius
-					iferr (repellerData.Append(rdata))
+					Flock::RepellerData repellerDataItem(repellerDataRef.GetFloat(OFLOCKREPELLER_WEIGHT, 1.0), Sqr(repellerDataRef.GetFloat(OFLOCKREPELLER_RADIUS)), opListItem->GetMg().off);
+					repellerDataItem.radiusI = maxon::Inverse(repellerDataItem.radius); // Calculate inverse radius
+					iferr (repellerData.Append(repellerDataItem))
 					{
 						GePrint(err.GetMessage());
 						return;
@@ -305,13 +289,12 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		}
 	}
 
-
 	// Iterate particles
 	for (Int32 i = 0; i < pcnt; ++i)
 	{
 		// Store a ref to the current Particle and current BaseParticle, so we don't have to
 		// do all the pointer arithmetics for pp[i].
-		Particle &currentParticle = pp[i];
+		const Particle &currentParticle = pp[i];
 		BaseParticle &currentBaseParticle = ss[i];
 
 		// Skip unwanted particles
@@ -329,7 +312,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		{
 			// Store a ref to the current other particle, so we don't have to
 			// do all the pointer arithmetics for pp[j].
-			Particle &currentOtherParticle = pp[j];
+			const Particle &currentOtherParticle = pp[j];
 
 			// Skip unwanted particles
 			if (!(currentOtherParticle.bits&PARTICLEFLAGS::VISIBLE) || i == j)
@@ -378,7 +361,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		{
 			/* ------------------- Soft Rules --------------------------- */
 
-			Float fCountI = maxon::Inverse((Float)iCount);
+			const Float fCountI = maxon::Inverse((Float)iCount);
 
 			// Flock Center
 			// ------------
@@ -408,8 +391,8 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		{
 			for (maxon::BaseArray<Flock::TargetData>::Iterator target = targetData.Begin(); target != targetData.End(); ++target)
 			{
-				Vector dist = target->position - currentParticle.off;
-				Float distLength = dist.GetSquaredLength();
+				const Vector dist = target->position - currentParticle.off;
+				const Float distLength = dist.GetSquaredLength();
 				if (target->infinite)
 				{
 					vParticleDir += dist * target->weight * fTargetGlobalWeight;
@@ -434,8 +417,8 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		{
 			for (maxon::BaseArray<Flock::RepellerData>::Iterator repeller = repellerData.Begin(); repeller != repellerData.End(); ++repeller)
 			{
-				Vector dist = repeller->position - currentParticle.off;
-				Float distLength = dist.GetSquaredLength();
+				const Vector dist = repeller->position - currentParticle.off;
+				const Float distLength = dist.GetSquaredLength();
 				if (distLength < repeller->radius)
 					vParticleDir -= dist * (1.0 - distLength * repeller->radiusI) * repeller->weight * fRepellGlobalWeight;
 			}
@@ -456,7 +439,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		// --------------
 		if (rulemask&Flock::RULEFLAGS::AVOIDGEO)
 		{
-			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI * !vParticleDir, fAvoidGeoDist))
+			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI * vParticleDir.GetNormalized(), fAvoidGeoDist))
 			{
 				GeRayColResult colliderResult;
 
@@ -467,7 +450,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 
 					// Direction pointing away from surface
 					// Just the normalized shading normal in global space
-					Vector awayFromSurface(mAvoidGeo.sqmat * !colliderResult.s_normal);
+					const Vector awayFromSurface(mAvoidGeo.sqmat * colliderResult.s_normal.GetNormalized());
 
 					switch (iAvoidGeoMode)
 					{
@@ -513,11 +496,11 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				{
 					if (fSpeed < fSpeedMin)
 					{
-						vParticleDir = !vParticleDir * fSpeedMin;
+						vParticleDir = vParticleDir.GetNormalized() * fSpeedMin;
 					}
 					else if (fSpeed > fSpeedMax)
 					{
-						vParticleDir = !vParticleDir * fSpeedMax;
+						vParticleDir = vParticleDir.GetNormalized() * fSpeedMax;
 					}
 					break;
 				}
@@ -526,7 +509,6 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 
 		// Add resulting velocity, apply overall weight
 		currentBaseParticle.v += Blend(currentParticle.v3, vParticleDir, fWeight);
-
 		currentBaseParticle.count++;
 	}
 }
