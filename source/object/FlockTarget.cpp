@@ -1,8 +1,16 @@
-#include "c4d.h"
-#include "c4d_symbols.h"
-#include "Oflocktarget.h"
+#include "lib_description.h"
+
+#include "c4d_baseobject.h"
+#include "c4d_objectdata.h"
+#include "c4d_resource.h"
+#include "c4d_basecontainer.h"
+#include "c4d_basebitmap.h"
+
 #include "helpers.h"
 #include "main.h"
+
+#include "c4d_symbols.h"
+#include "oflocktarget.h"
 
 
 class FlockTarget : public ObjectData
@@ -10,9 +18,9 @@ class FlockTarget : public ObjectData
 	INSTANCEOF(FlockTarget, ObjectData)
 
 public:
-	virtual Bool Init(GeListNode *node);
-	virtual Bool GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
-	virtual DRAWRESULT Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh);
+	virtual Bool Init(GeListNode* node);
+	virtual Bool GetDEnabling(GeListNode* node, const DescID& id, const GeData& t_data, DESCFLAGS_ENABLE flags, const BaseContainer* itemdesc);
+	virtual DRAWRESULT Draw(BaseObject* op, DRAWPASS drawpass, BaseDraw* bd, BaseDrawHelp* bh);
 
 	static NodeData *Alloc()
 	{
@@ -21,57 +29,44 @@ public:
 };
 
 
-//
-// Initialize attributes
-//
-Bool FlockTarget::Init(GeListNode *node)
+Bool FlockTarget::Init(GeListNode* node)
 {
 	if (!node)
 		return false;
 
-	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
-	if (!bc)
-		return false;
+	BaseContainer& dataRef = static_cast<BaseObject*>(node)->GetDataInstanceRef();
 
-	bc->SetBool(OFLOCKTARGET_ENABLED, true);
-	bc->SetFloat(OFLOCKTARGET_WEIGHT, 1.0);
-	bc->SetFloat(OFLOCKTARGET_RADIUS, 50.0);
-	bc->SetBool(OFLOCKTARGET_RADIUS_INFINITE, true);
+	dataRef.SetBool(OFLOCKTARGET_ENABLED, true);
+	dataRef.SetFloat(OFLOCKTARGET_WEIGHT, 1.0);
+	dataRef.SetFloat(OFLOCKTARGET_RADIUS, 50.0);
+	dataRef.SetBool(OFLOCKTARGET_RADIUS_INFINITE, true);
 
 	return SUPER::Init(node);
 }
 
-//
-// Enable/Disable attributes
-//
-Bool FlockTarget::GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc)
+Bool FlockTarget::GetDEnabling(GeListNode* node, const DescID& id, const GeData& t_data, DESCFLAGS_ENABLE flags, const BaseContainer* itemdesc)
 {
 	if (!node)
 		return false;
 
-	BaseContainer *bc = (static_cast<BaseObject*>(node))->GetDataInstance();
-	if (!bc)
-		return false;
+	const BaseContainer& dataRef = static_cast<BaseObject*>(node)->GetDataInstanceRef();
 
 	switch (id[0].id)
 	{
 		case OFLOCKTARGET_RADIUS_INFINITE:
 		case OFLOCKTARGET_WEIGHT:
-			return bc->GetBool(OFLOCKTARGET_ENABLED, false);
+			return dataRef.GetBool(OFLOCKTARGET_ENABLED, false);
 			break;
 
 		case OFLOCKTARGET_RADIUS:
-			return !bc->GetBool(OFLOCKTARGET_RADIUS_INFINITE, true) && bc->GetBool(OFLOCKTARGET_ENABLED, false);
+			return !dataRef.GetBool(OFLOCKTARGET_RADIUS_INFINITE, true) && dataRef.GetBool(OFLOCKTARGET_ENABLED, false);
 			break;
 	}
 
 	return SUPER::GetDEnabling(node, id, t_data, flags, itemdesc);
 }
 
-//
-// Draw viewport representation
-//
-DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
+DRAWRESULT FlockTarget::Draw(BaseObject* op, DRAWPASS drawpass, BaseDraw* bd, BaseDrawHelp* bh)
 {
 	if (drawpass != DRAWPASS::OBJECT)
 		return DRAWRESULT::SKIP;
@@ -79,17 +74,15 @@ DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, Ba
 	if (!op || !bd || !bh)
 		return DRAWRESULT::FAILURE;
 
-	BaseContainer* bc = op->GetDataInstance();
-	if (!bc)
-		return DRAWRESULT::FAILURE;
+	const BaseContainer& dataRef = op->GetDataInstanceRef();
 
-	bd->SetPen(COLOR_FLOCKTARGET * bc->GetFloat(OFLOCKTARGET_WEIGHT));
+	bd->SetPen(Flock::COLOR_FLOCKTARGET * dataRef.GetFloat(OFLOCKTARGET_WEIGHT));
 
 	bd->SetMatrix_Matrix(op, bh->GetMg());
-	if (bc->GetBool(OFLOCKTARGET_RADIUS_INFINITE))
-		Draw3DCross(bd, 50.0);
+	if (dataRef.GetBool(OFLOCKTARGET_RADIUS_INFINITE))
+		Flock::Draw3dCross(bd, 50.0);
 	else
-		DrawSphere(bd, bc->GetFloat(OFLOCKTARGET_RADIUS, 50.0));
+		Flock::DrawSphere(bd, dataRef.GetFloat(OFLOCKTARGET_RADIUS, 50.0));
 
 	bd->SetMatrix_Matrix(nullptr, Matrix());
 
@@ -97,10 +90,7 @@ DRAWRESULT FlockTarget::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, Ba
 }
 
 
-//
-// Register Plugin Object
-//
 Bool RegisterFlockTarget()
 {
-	return RegisterObjectPlugin(ID_OFLOCKTARGET, GeLoadString(IDS_OFLOCKTARGET), 0, FlockTarget::Alloc, "Oflocktarget"_s, AutoBitmap("Oflocktarget.tif"_s), 0);
+	return RegisterObjectPlugin(Flock::ID_OFLOCKTARGET, GeLoadString(IDS_OFLOCKTARGET), 0, FlockTarget::Alloc, "oflocktarget"_s, AutoBitmap("oflocktarget.tif"_s), 0);
 }
