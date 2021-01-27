@@ -249,7 +249,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 					tdata.radiusI = maxon::Inverse(tdata.radius); // Calculate inverse radius
 					iferr (targetData.Append(tdata))
 					{
-						DiagnosticOutput("Could not append target to targetData array!");
+						GePrint(err.GetMessage());
 						return;
 					}
 				}
