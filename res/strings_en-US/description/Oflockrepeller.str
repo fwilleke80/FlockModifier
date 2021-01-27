@@ -1,8 +1,8 @@
-STRINGTABLE Oflockrepeller
+STRINGTABLE oflockrepeller
 {
-	Oflockrepeller							"Flock Repeller Object";
+	oflockrepeller         "Flock Repeller Object";
 
-	OFLOCKREPELLER_WEIGHT				"Weight";
-	OFLOCKREPELLER_RADIUS				"Radius";
-	OFLOCKREPELLER_ENABLED			"Enabled";
+	OFLOCKREPELLER_WEIGHT  "Weight";
+	OFLOCKREPELLER_RADIUS  "Radius";
+	OFLOCKREPELLER_ENABLED "Enabled";
 }

@@ -1,5 +1,5 @@
-#ifndef _Oflocktarget_H_
-#define _Oflocktarget_H_
+#ifndef OFLOCKTARGET_H__
+#define OFLOCKTARGET_H__
 
 enum
 {

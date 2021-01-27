@@ -1,9 +1,6 @@
-// C4D-StringResource
-// Identifier	Text
-
 STRINGTABLE
 {
-  IDS_OFLOCK					"Flock";
-	IDS_OFLOCKTARGET		"Flock Target";
-	IDS_OFLOCKREPELLER	"Flock Repeller";
+	IDS_OFLOCK         "Flock";
+	IDS_OFLOCKTARGET   "Flock";
+	IDS_OFLOCKREPELLER "Flock Repeller";
 }

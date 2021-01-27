@@ -1,9 +1,9 @@
-STRINGTABLE Oflocktarget
+STRINGTABLE oflocktarget
 {
-	Oflocktarget									"Schwarm-Ziel-Objekt";
+	oflocktarget                 "Verscheuch-Objekt";
 
-	OFLOCKTARGET_WEIGHT						"Wichtung";
-	OFLOCKTARGET_RADIUS						"Radius";
-	OFLOCKTARGET_ENABLED					"Aktiv";
-	OFLOCKTARGET_RADIUS_INFINITE	"Unendlich";
+	OFLOCKTARGET_WEIGHT          "Wichtung";
+	OFLOCKTARGET_RADIUS          "Radius";
+	OFLOCKTARGET_ENABLED         "Aktiv";
+	OFLOCKTARGET_RADIUS_INFINITE "Unendlich";
 }

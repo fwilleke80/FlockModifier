@@ -1,9 +1,6 @@
-// C4D-StringResource
-// Identifier	Text
-
 STRINGTABLE
 {
-  IDS_OFLOCK					"Schwarm";
-	IDS_OFLOCKTARGET		"Schwarm-Ziel";
-	IDS_OFLOCKREPELLER	"Schwarm-Scheuche";
+	IDS_OFLOCK         "Schwarm";
+	IDS_OFLOCKTARGET   "Anlocken";
+	IDS_OFLOCKREPELLER "Verscheuchen";
 }

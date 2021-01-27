@@ -1,5 +1,5 @@
-#ifndef _Oflockrepeller_H_
-#define _Oflockrepeller_H_
+#ifndef OFLOCKREPELLER_H__
+#define OFLOCKREPELLER_H__
 
 enum
 {

@@ -1,7 +1,7 @@
 #ifndef MAIN_H__
 #define MAIN_H__
 
-#include "c4d.h"
+#include "ge_prepass.h"
 
 Bool RegisterFlockModifier();
 Bool RegisterFlockTarget();

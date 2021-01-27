@@ -1,42 +1,52 @@
-STRINGTABLE Oflock
+STRINGTABLE oflock
 {
-	Oflock											"Schwarm-Objekt";
+	oflock                        "Schwarm-Objekt";
 
-	OFLOCK_WEIGHT								"Wichtung";
-	OFLOCK_SIGHT								"Nachbarschafts-Radius";
-	OFLOCK_CENTER								"Schwarmmitte";
-	OFLOCK_CENTER_WEIGHT				"Wichtung";
-	OFLOCK_NEIGHBORDIST					"Abstand zum Nachbarn";
-	OFLOCK_NEIGHBORDIST_WEIGHT	"Wichtung";
-	OFLOCK_NEIGHBORDIST_DIST		"Distanz";
-	OFLOCK_MATCHVEL							"Richtung und Geschwindigkeit angleichen";
-	OFLOCK_MATCHVEL_WEIGHT			"Wichtung";
-	OFLOCK_TARGET								"Ziel";
-	OFLOCK_TARGET_WEIGHT				"Wichtung";
-	OFLOCK_TARGET_LINK					"Objekte";
-	OFLOCK_LEVELFLIGHT					"Flugh\u00f6he beibehalten";
-	OFLOCK_LEVELFLIGHT_WEIGHT		"Wichtung";
-	OFLOCK_SPEED								"Geschwindigkeitsbegrenzung";
-	OFLOCK_SPEED_MIN						"Min";
-	OFLOCK_SPEED_MAX						"Max";
-	OFLOCK_SPEED_MODE						"Modus";
-		OFLOCK_SPEED_MODE_SOFT			"Weich";
-		OFLOCK_SPEED_MODE_HARD			"Hart";
-	OFLOCK_SPEED_WEIGHT					"Wichtung";
-	OFLOCK_AVOIDGEO							"Geometrie ausweichen";
-	OFLOCK_AVOIDGEO_WEIGHT			"Wichtung";
-	OFLOCK_AVOIDGEO_DIST				"Distanz";
-	OFLOCK_AVOIDGEO_LINK				"Geometrie";
-	OFLOCK_AVOIDGEO_MODE				"Modus";
-		OFLOCK_AVOIDGEO_MODE_SOFT		"Weich";
-		OFLOCK_AVOIDGEO_MODE_HARD		"Hart";
-	OFLOCK_TURBULENCE						"Turbulenz";
-	OFLOCK_TURBULENCE_WEIGHT		"Wichtung";
-	OFLOCK_TURBULENCE_FREQUENCY	"Frequenz";
-	OFLOCK_TURBULENCE_SCALE			"Skalierung";
-	OFLOCK_REPELL								"Absto\u00dfen";
-	OFLOCK_REPELL_WEIGHT				"Wichtung";
-	OFLOCK_REPELL_LINK					"Objekte";
-	OFLOCK_TAB_1								"Schwarm";
-	OFLOCK_TAB_2								"Kontrolle";
+	OFLOCK_WEIGHT                 "Wichtung";
+	OFLOCK_SIGHT                  "Nachbarschafts-Radius";
+
+	OFLOCK_CENTER                 "Schwarmmitte";
+	OFLOCK_CENTER_WEIGHT          "Wichtung";
+
+	OFLOCK_NEIGHBORDIST           "Abstand zum Nachbarn";
+	OFLOCK_NEIGHBORDIST_WEIGHT    "Wichtung";
+	OFLOCK_NEIGHBORDIST_DIST      "Distanz";
+
+	OFLOCK_MATCHVEL               "Richtung und Geschwindigkeit angleichen";
+	OFLOCK_MATCHVEL_WEIGHT        "Wichtung";
+
+	OFLOCK_TARGET                 "Anlocken";
+	OFLOCK_TARGET_WEIGHT          "Wichtung";
+	OFLOCK_TARGET_LINK            "Objekte";
+
+	OFLOCK_LEVELFLIGHT            "Flugh\u00f6he beibehalten";
+	OFLOCK_LEVELFLIGHT_WEIGHT     "Wichtung";
+
+	OFLOCK_SPEED                  "Geschwindigkeitsbegrenzung";
+	OFLOCK_SPEED_MIN              "Min";
+	OFLOCK_SPEED_MAX              "Max";
+	OFLOCK_SPEED_MODE             "Modus";
+		OFLOCK_SPEED_MODE_SOFT        "Weich";
+		OFLOCK_SPEED_MODE_HARD        "Hart";
+	OFLOCK_SPEED_WEIGHT           "Wichtung";
+
+	OFLOCK_AVOIDGEO               "Geometrie ausweichen";
+	OFLOCK_AVOIDGEO_WEIGHT        "Wichtung";
+	OFLOCK_AVOIDGEO_DIST          "Distanz";
+	OFLOCK_AVOIDGEO_LINK          "Geometrie";
+	OFLOCK_AVOIDGEO_MODE          "Modus";
+		OFLOCK_AVOIDGEO_MODE_SOFT     "Weich";
+		OFLOCK_AVOIDGEO_MODE_HARD     "Hart";
+
+	OFLOCK_TURBULENCE             "Turbulenz";
+	OFLOCK_TURBULENCE_WEIGHT      "Wichtung";
+	OFLOCK_TURBULENCE_FREQUENCY   "Frequenz";
+	OFLOCK_TURBULENCE_SCALE       "Skalierung";
+
+	OFLOCK_REPELL                 "Verscheuchen";
+	OFLOCK_REPELL_WEIGHT          "Wichtung";
+	OFLOCK_REPELL_LINK            "Objekte";
+
+	OFLOCK_TAB_1                  "Schwarm";
+	OFLOCK_TAB_2                  "Kontrolle";
 }

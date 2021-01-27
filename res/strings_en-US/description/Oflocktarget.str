@@ -1,9 +1,9 @@
-STRINGTABLE Oflocktarget
+STRINGTABLE oflocktarget
 {
-	Oflocktarget									"Flock Target Object";
+	oflocktarget                 "Flock Target Object";
 
-	OFLOCKTARGET_WEIGHT						"Weight";
-	OFLOCKTARGET_RADIUS						"Radius";
-	OFLOCKTARGET_ENABLED					"Enabled";
-	OFLOCKTARGET_RADIUS_INFINITE	"Infinite";
+	OFLOCKTARGET_WEIGHT          "Weight";
+	OFLOCKTARGET_RADIUS          "Radius";
+	OFLOCKTARGET_ENABLED         "Enabled";
+	OFLOCKTARGET_RADIUS_INFINITE "Infinite";
 }

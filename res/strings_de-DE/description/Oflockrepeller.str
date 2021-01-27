@@ -1,8 +1,8 @@
-STRINGTABLE Oflockrepeller
+STRINGTABLE oflockrepeller
 {
-	Oflockrepeller							"Schwarm-Scheuche-Objekt";
+	oflockrepeller         "Anlock-Objekt";
 
-	OFLOCKREPELLER_WEIGHT				"Wichtung";
-	OFLOCKREPELLER_RADIUS				"Radius";
-	OFLOCKREPELLER_ENABLED			"Aktiv";
+	OFLOCKREPELLER_WEIGHT  "Wichtung";
+	OFLOCKREPELLER_RADIUS  "Radius";
+	OFLOCKREPELLER_ENABLED "Aktiv";
 }

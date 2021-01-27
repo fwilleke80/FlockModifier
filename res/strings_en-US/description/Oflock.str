@@ -1,42 +1,52 @@
-STRINGTABLE Oflock
+STRINGTABLE oflock
 {
-	Oflock											"Flock Object";
+	oflock                        "Flock Object";
 
-	OFLOCK_WEIGHT								"Weight";
-	OFLOCK_SIGHT								"Neighbor Range";
-	OFLOCK_CENTER								"Center Flock";
-	OFLOCK_CENTER_WEIGHT				"Weight";
-	OFLOCK_NEIGHBORDIST					"Neighbor Minimum Distance";
-	OFLOCK_NEIGHBORDIST_WEIGHT	"Weight";
-	OFLOCK_NEIGHBORDIST_DIST		"Distance";
-	OFLOCK_MATCHVEL							"Match Flock Velocity";
-	OFLOCK_MATCHVEL_WEIGHT			"Weight";
-	OFLOCK_TARGET								"Target";
-	OFLOCK_TARGET_WEIGHT				"Weight";
-	OFLOCK_TARGET_LINK					"Objects";
-	OFLOCK_LEVELFLIGHT					"Level Flight";
-	OFLOCK_LEVELFLIGHT_WEIGHT		"Weight";
-	OFLOCK_SPEED								"Speed Limits";
-	OFLOCK_SPEED_MIN						"Min";
-	OFLOCK_SPEED_MAX						"Max";
-	OFLOCK_SPEED_MODE						"Mode";
-		OFLOCK_SPEED_MODE_SOFT			"Soft";
-		OFLOCK_SPEED_MODE_HARD			"Hard";
-	OFLOCK_SPEED_WEIGHT					"Weight";
-	OFLOCK_AVOIDGEO							"Avoid Geometry";
-	OFLOCK_AVOIDGEO_WEIGHT			"Weight";
-	OFLOCK_AVOIDGEO_DIST				"Distance";
-	OFLOCK_AVOIDGEO_LINK				"Geometry";
-	OFLOCK_AVOIDGEO_MODE				"Mode";
-		OFLOCK_AVOIDGEO_MODE_SOFT		"Soft";
-		OFLOCK_AVOIDGEO_MODE_HARD		"Hard";
-	OFLOCK_TURBULENCE						"Turbulence";
-	OFLOCK_TURBULENCE_WEIGHT		"Weight";
-	OFLOCK_TURBULENCE_FREQUENCY	"Frequency";
-	OFLOCK_TURBULENCE_SCALE			"Scale";
-	OFLOCK_REPELL								"Repeller";
-	OFLOCK_REPELL_WEIGHT				"Weight";
-	OFLOCK_REPELL_LINK					"Objects";
-	OFLOCK_TAB_1								"Flocking";
-	OFLOCK_TAB_2								"Control";
+	OFLOCK_WEIGHT                 "Weight";
+	OFLOCK_SIGHT                  "Neighbor Range";
+
+	OFLOCK_CENTER                 "Center Flock";
+	OFLOCK_CENTER_WEIGHT          "Weight";
+
+	OFLOCK_NEIGHBORDIST           "Neighbor Minimum Distance";
+	OFLOCK_NEIGHBORDIST_WEIGHT    "Weight";
+	OFLOCK_NEIGHBORDIST_DIST      "Distance";
+
+	OFLOCK_MATCHVEL               "Match Flock Velocity";
+	OFLOCK_MATCHVEL_WEIGHT        "Weight";
+
+	OFLOCK_TARGET                 "Target";
+	OFLOCK_TARGET_WEIGHT          "Weight";
+	OFLOCK_TARGET_LINK            "Objects";
+
+	OFLOCK_LEVELFLIGHT            "Level Flight";
+	OFLOCK_LEVELFLIGHT_WEIGHT     "Weight";
+
+	OFLOCK_SPEED                  "Speed Limits";
+	OFLOCK_SPEED_MIN              "Min";
+	OFLOCK_SPEED_MAX              "Max";
+	OFLOCK_SPEED_MODE             "Mode";
+		OFLOCK_SPEED_MODE_SOFT        "Soft";
+		OFLOCK_SPEED_MODE_HARD        "Hard";
+	OFLOCK_SPEED_WEIGHT           "Weight";
+
+	OFLOCK_AVOIDGEO               "Avoid Geometry";
+	OFLOCK_AVOIDGEO_WEIGHT        "Weight";
+	OFLOCK_AVOIDGEO_DIST          "Distance";
+	OFLOCK_AVOIDGEO_LINK          "Geometry";
+	OFLOCK_AVOIDGEO_MODE          "Mode";
+		OFLOCK_AVOIDGEO_MODE_SOFT     "Soft";
+		OFLOCK_AVOIDGEO_MODE_HARD     "Hard";
+	
+	OFLOCK_TURBULENCE             "Turbulence";
+	OFLOCK_TURBULENCE_WEIGHT      "Weight";
+	OFLOCK_TURBULENCE_FREQUENCY   "Frequency";
+	OFLOCK_TURBULENCE_SCALE       "Scale";
+
+	OFLOCK_REPELL                 "Repeller";
+	OFLOCK_REPELL_WEIGHT          "Weight";
+	OFLOCK_REPELL_LINK            "Objects";
+
+	OFLOCK_TAB_1                  "Flocking";
+	OFLOCK_TAB_2                  "Control";
 }

@@ -5,6 +5,6 @@ enum
 	IDS_OFLOCKTARGET,
 	IDS_OFLOCKREPELLER,
 
-// End of symbol definition
-  _DUMMY_ELEMENT_
+	// End of symbol definition
+	_DUMMY_ELEMENT_
 };
