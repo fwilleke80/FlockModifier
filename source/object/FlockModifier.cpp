@@ -242,7 +242,6 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	BaseObject* avoidGeoLink = dataRef.GetObjectLink(OFLOCK_AVOIDGEO_LINK, doc);
 	Matrix mAvoidGeo(maxon::DONT_INITIALIZE); // Collision geometry global matrix
 	Matrix mAvoidGeoI(maxon::DONT_INITIALIZE); // Collision geometry inverse global matrix
-	Float avoidGeoMixval = 0.0;
 	if (((avoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && avoidGeoWeight > 0.0) || avoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && avoidGeoDist > 0.0 && avoidGeoLink && avoidGeoLink->GetType() == Opolygon && ToPoly(avoidGeoLink)->GetPolygonCount() > 0)
 	{
 		rulemask |= Flock::RULEFLAGS::AVOIDGEO;
@@ -316,8 +315,11 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			if (rulemask&Flock::RULEFLAGS::NEIGHBORDIST)
 			{
 				// If neighbor is too close, move into the opposite direction
+				// TODO: (Frank) This doesn't look correct. Shouldn't we take the position of all close neighbors into account? Currently, only the last one counts.
 				if (neighborDistance < neighborMinDist)
+				{
 					neighborDirection = -neighborDiff;
+				}
 			}
 
 			// Match Velocity
@@ -328,15 +330,15 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			}
 
 			// Increase counter of considered flockmates
-			consideredFlockmatesCount++;
+			++consideredFlockmatesCount;
 		}
+
+		/* ------------------- Apply particle-particle interaction --------------------------- */
 
 		// If any other particles have been taken into account for the precalculations,
 		// apply any particle interaction that took place
 		if (consideredFlockmatesCount > 1)
 		{
-			/* ------------------- Soft Rules --------------------------- */
-
 			// Compute inverse of considered flockmates count
 			const Float iConsideredFlockmatesCount = maxon::Inverse((Float)consideredFlockmatesCount);
 
@@ -415,14 +417,14 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		// --------------
 		if (rulemask&Flock::RULEFLAGS::AVOIDGEO)
 		{
-			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI * particleDirection.GetNormalized(), avoidGeoDist))
+			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI.sqmat * particleDirection.GetNormalized(), avoidGeoDist))
 			{
 				GeRayColResult colliderResult;
 
 				if (_geoAvoidanceCollider->GetNearestIntersection(&colliderResult))
 				{
 					// Mixval: Range of [AvoidGeoDistance -> 0.0] mapped to [0.0 -> 1.0]
-					avoidGeoMixval = 1.0 - colliderResult.distance * avoidGeoDistI;
+					const Float avoidGeoUrgency = 1.0 - colliderResult.distance * avoidGeoDistI;
 
 					// Direction pointing away from surface
 					// Just the normalized shading normal in global space
@@ -432,13 +434,13 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 					{
 						case OFLOCK_AVOIDGEO_MODE_SOFT:
 							// Add the new direction to particle velocity, weighted by mixval and user weight value
-							particleDirection = particleDirection + awayFromSurface * particleDirection.GetLength() * avoidGeoMixval * avoidGeoWeight;
+							particleDirection += awayFromSurface * particleDirection.GetLength() * avoidGeoUrgency * avoidGeoWeight;
 							break;
 							
 						default:
 						case OFLOCK_AVOIDGEO_MODE_HARD:
 							// Blend between current velocity and new direction, weighted by mixval
-							particleDirection = Blend(awayFromSurface * particleDirection.GetLength(), particleDirection, avoidGeoMixval);
+							particleDirection = Blend(awayFromSurface * particleDirection.GetLength(), particleDirection, avoidGeoUrgency);
 							break;
 					}
 				}
