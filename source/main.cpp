@@ -6,7 +6,7 @@
 
 Bool PluginStart()
 {
-	GePrint("FlockModifier 0.7.7"_s);
+	GePrint("FlockModifier 0.7.8"_s);
 
 	if (!RegisterFlockModifier())
 		return false;

@@ -14,7 +14,7 @@
 
 
 ///
-/// \brief This class implements a imple object with some viewport drawing. The FlockModifier will recognize it as an attractor.
+/// \brief This class implements a simple object with some viewport drawing. The FlockModifier will recognize it as an attractor.
 ///
 class FlockTarget : public ObjectData
 {

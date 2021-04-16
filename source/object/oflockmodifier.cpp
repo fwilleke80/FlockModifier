@@ -240,8 +240,8 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 	const Float avoidGeoDist = dataRef.GetFloat(OFLOCK_AVOIDGEO_DIST);
 	const Float avoidGeoDistI = maxon::Inverse(avoidGeoDist);
 	BaseObject* avoidGeoLink = dataRef.GetObjectLink(OFLOCK_AVOIDGEO_LINK, doc);
-	Matrix mAvoidGeo(maxon::DONT_INITIALIZE); // Collision geometry global matrix
-	Matrix mAvoidGeoI(maxon::DONT_INITIALIZE); // Collision geometry inverse global matrix
+	Matrix avoidGeo2Global(maxon::DONT_INITIALIZE); // Collision geometry global matrix
+	Matrix global2AvoidGeo(maxon::DONT_INITIALIZE); // Collision geometry inverse global matrix
 	if (((avoidGeoMode == OFLOCK_AVOIDGEO_MODE_SOFT && avoidGeoWeight > 0.0) || avoidGeoMode == OFLOCK_AVOIDGEO_MODE_HARD) && avoidGeoDist > 0.0 && avoidGeoLink && avoidGeoLink->GetType() == Opolygon && ToPoly(avoidGeoLink)->GetPolygonCount() > 0)
 	{
 		rulemask |= Flock::RULEFLAGS::AVOIDGEO;
@@ -254,8 +254,8 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				return;
 		}
 		_geoAvoidanceCollider->Init(avoidGeoLink, false);
-		mAvoidGeo = avoidGeoLink->GetMg();
-		mAvoidGeoI = ~mAvoidGeo;
+		avoidGeo2Global = avoidGeoLink->GetMg();
+		global2AvoidGeo = ~avoidGeo2Global;
 	}
 
 	// Iterate particles
@@ -271,10 +271,10 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			continue;
 
 		// Reset values
-		Vector particleDirection; // New direction of particle
+		Vector finalParticleDirection; // New direction of particle
 		Vector centerflockPosition; // Position of flock center
 		Vector flockVelocity; // Aggregated velocity of considered flockmates
-		Int32 consideredFlockmatesCount = 0;
+		Int32 consideredFlockmatesCount = 0; // Number of flockmates within sight range (used for weighting the aggregated data from particle-particle interaction)
 
 		/* ------------------- Collect particle-particle interaction data --------------------------- */
 
@@ -346,21 +346,21 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 			// ------------
 			if (rulemask&Flock::RULEFLAGS::CENTER)
 			{
-				particleDirection += (centerflockPosition * iConsideredFlockmatesCount - currentParticle.off) * centerflockWeight;
+				finalParticleDirection += (centerflockPosition * iConsideredFlockmatesCount - currentParticle.off) * centerflockWeight;
 			}
 
 			// Neighbor Distance
 			// -----------------
 			if (rulemask&Flock::RULEFLAGS::NEIGHBORDIST)
 			{
-				particleDirection += neighborDirection * neighborWeight;
+				finalParticleDirection += neighborDirection * neighborWeight;
 			}
 
 			// Match Velocity
 			// --------------
 			if (rulemask&Flock::RULEFLAGS::MATCHVELO)
 			{
-				particleDirection += ((flockVelocity * iConsideredFlockmatesCount) - currentParticle.v3) * matchVelocityWeight;
+				finalParticleDirection += ((flockVelocity * iConsideredFlockmatesCount) - currentParticle.v3) * matchVelocityWeight;
 			}
 		}
 
@@ -374,11 +374,11 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				const Float distLength = distance.GetSquaredLength();
 				if (target->infinite)
 				{
-					particleDirection += distance * target->weight * targetGlobalWeight;
+					finalParticleDirection += distance * target->weight * targetGlobalWeight;
 				}
 				else if (distLength < target->radius)
 				{
-					particleDirection += distance * (1.0 - distLength * target->radiusI) * target->weight * targetGlobalWeight;
+					finalParticleDirection += distance * (1.0 - distLength * target->radiusI) * target->weight * targetGlobalWeight;
 				}
 			}
 		}
@@ -387,7 +387,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		// ----------
 		if (rulemask&Flock::RULEFLAGS::TURBULENCE)
 		{
-			particleDirection += Vector(SNoise(turbulenceScale * currentParticle.off, turbulenceTime), SNoise(turbulenceScale * currentParticle.off + vTurbulenceAdd1, turbulenceTime), SNoise(turbulenceScale * currentParticle.off + vTurbulenceAdd2, turbulenceTime)) * turbulenceWeight;
+			finalParticleDirection += Vector(SNoise(turbulenceScale * currentParticle.off, turbulenceTime), SNoise(turbulenceScale * currentParticle.off + vTurbulenceAdd1, turbulenceTime), SNoise(turbulenceScale * currentParticle.off + vTurbulenceAdd2, turbulenceTime)) * turbulenceWeight;
 		}
 
 		// Repell
@@ -399,25 +399,25 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				const Vector dist = repeller->position - currentParticle.off;
 				const Float distLength = dist.GetSquaredLength();
 				if (distLength < repeller->radius)
-					particleDirection -= dist * (1.0 - distLength * repeller->radiusI) * repeller->weight * repellGlobalWeight;
+					finalParticleDirection -= dist * (1.0 - distLength * repeller->radiusI) * repeller->weight * repellGlobalWeight;
 			}
 		}
 
 		// Add current velocity to resulting direction
-		particleDirection += currentParticle.v3;
+		finalParticleDirection += currentParticle.v3;
 
 		// Level Flight
 		// ------------
 		if (rulemask&Flock::RULEFLAGS::LEVELFLIGHT)
 		{
-			particleDirection.y -= particleDirection.y * levelFlightWeight;
+			finalParticleDirection.y -= finalParticleDirection.y * levelFlightWeight;
 		}
 
 		// Avoid Geometry
 		// --------------
 		if (rulemask&Flock::RULEFLAGS::AVOIDGEO)
 		{
-			if (_geoAvoidanceCollider->Intersect(mAvoidGeoI * currentParticle.off, mAvoidGeoI.sqmat * particleDirection.GetNormalized(), avoidGeoDist))
+			if (_geoAvoidanceCollider->Intersect(global2AvoidGeo * currentParticle.off, global2AvoidGeo.sqmat * finalParticleDirection.GetNormalized(), avoidGeoDist))
 			{
 				GeRayColResult colliderResult;
 
@@ -428,19 +428,19 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 
 					// Direction pointing away from surface
 					// Just the normalized shading normal in global space
-					const Vector awayFromSurface(mAvoidGeo.sqmat * colliderResult.s_normal.GetNormalized());
+					const Vector awayFromSurface(avoidGeo2Global.sqmat * colliderResult.s_normal.GetNormalized());
 
 					switch (avoidGeoMode)
 					{
 						case OFLOCK_AVOIDGEO_MODE_SOFT:
 							// Add the new direction to particle velocity, weighted by mixval and user weight value
-							particleDirection += awayFromSurface * particleDirection.GetLength() * avoidGeoUrgency * avoidGeoWeight;
+							finalParticleDirection += awayFromSurface * finalParticleDirection.GetLength() * avoidGeoUrgency * avoidGeoWeight;
 							break;
 							
 						default:
 						case OFLOCK_AVOIDGEO_MODE_HARD:
 							// Blend between current velocity and new direction, weighted by mixval
-							particleDirection = Blend(awayFromSurface * particleDirection.GetLength(), particleDirection, avoidGeoUrgency);
+							finalParticleDirection = Blend(awayFromSurface * finalParticleDirection.GetLength(), finalParticleDirection, avoidGeoUrgency);
 							break;
 					}
 				}
@@ -454,7 +454,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		// The speed limit help keep the boids from reaching warp speed.
 		if (rulemask&Flock::RULEFLAGS::SPEEDLIMIT)
 		{
-			const Float speed = particleDirection.GetSquaredLength() * diff;
+			const Float speed = finalParticleDirection.GetSquaredLength() * diff;
 
 			switch (speedMode)
 			{
@@ -463,12 +463,12 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 					if (speed < speedMin)
 					{
 						const Float speedRatio = speedMin / FMax(speed, EPSILON);
-						particleDirection *= Blend(1.0, speedRatio, speedWeight);
+						finalParticleDirection *= Blend(1.0, speedRatio, speedWeight);
 					}
 					else if (speed > speedMax)
 					{
 						const Float speedRatio = speedMax / FMax(speed, EPSILON);
-						particleDirection *= Blend(1.0, speedRatio, speedWeight);
+						finalParticleDirection *= Blend(1.0, speedRatio, speedWeight);
 					}
 					break;
 				}
@@ -477,11 +477,11 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 				{
 					if (speed < speedMin)
 					{
-						particleDirection = particleDirection.GetNormalized() * speedMin;
+						finalParticleDirection = finalParticleDirection.GetNormalized() * speedMin;
 					}
 					else if (speed > speedMax)
 					{
-						particleDirection = particleDirection.GetNormalized() * speedMax;
+						finalParticleDirection = finalParticleDirection.GetNormalized() * speedMax;
 					}
 					break;
 				}
@@ -489,7 +489,7 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 		}
 
 		// Add resulting velocity, apply overall weight
-		currentBaseParticle.v += Blend(currentParticle.v3, particleDirection, modifierWeight);
+		currentBaseParticle.v += Blend(currentParticle.v3, finalParticleDirection, modifierWeight);
 		++currentBaseParticle.count;
 	}
 }
@@ -497,5 +497,5 @@ void FlockModifier::ModifyParticles(BaseObject* op, Particle* pp, BaseParticle* 
 
 Bool RegisterFlockModifier()
 {
-	return RegisterObjectPlugin(Flock::ID_OFLOCKMODIFIER, GeLoadString(IDS_OFLOCK), OBJECT_PARTICLEMODIFIER, FlockModifier::Alloc, "Oflock"_s, AutoBitmap("Oflock.tif"_s), 0);
+	return RegisterObjectPlugin(Flock::ID_OFLOCKMODIFIER, GeLoadString(IDS_OFLOCK), OBJECT_PARTICLEMODIFIER, FlockModifier::Alloc, "oflock"_s, AutoBitmap("oflock.tif"_s), 0);
 }
