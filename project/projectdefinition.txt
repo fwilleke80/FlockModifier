@@ -10,7 +10,7 @@ APIS=cinema.framework;core.framework
 // C4D component
 C4D=true
 
-stylecheck.level=3 // must be set after c4d=true
+stylecheck.level=3
 
 // Custom ID
 ModuleId=de.frankwilleke.flockmodifier
